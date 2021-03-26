@@ -1,6 +1,4 @@
 from flask import Flask, render_template, request
-from flask_mysqldb import MySQL
-# import MySQLdb.cursors
 from flask_mysql_connector import MySQL
 
 app = Flask(__name__)
@@ -16,8 +14,9 @@ def index():
     try:
         conn = mysql.connection
         cur = conn.cursor()
-        name, species = cur.fetchone()
-        return render_template('index.html', name=name, species=species)
+        # cur.execute("SELECT name, species from pet where owner = 'BOB'")
+        # name, species = cur.fetchone()
+        # return render_template('index.html', name=name, species=species)
     except ValueError:
         print("Error mysql connection 1")
         return
