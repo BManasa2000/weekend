@@ -1,0 +1,74 @@
+{% extends "layout.html" %}
+
+{% block body %}
+	<h1>Tier</h1>
+	<form method="POST">
+		<div> 
+			<h2>Add tier</h2>
+			<input id="tier_name" type="text" name="tierName" placeholder="Tier name">
+			<input id="tier_price" type="number" name="tierPrice" placeholder="Tier price">
+			<input type="submit" name="submit_btn" value="Add Tier">
+			<span></span>
+		</div>
+	</form>
+
+	<form method="POST">
+		<div> 
+			<h2>Delete tier</h2>
+			<select name = "tierid">
+				<option disabled selected value="">Tier</option>
+				{% for tier in tiers %}
+				<option value={{tier[0]}} name = "tier_id">
+					{{tier[1]}}
+				</option>
+				{% endfor %}
+			</select>
+			<input type="submit" name="submit_btn" value="Delete Tier">
+			<span></span>
+		</div>
+		
+	</form>
+
+	<form method="POST">
+		<div> 
+			<h2>Update tier price</h2>
+			<select name = "tierid">
+				<option disabled selected value="">Tier</option>
+				{% for tier in tiers %}
+				<option value={{tier[0]}} name = "tierid">
+					{{tier[1]}}
+				</option>
+				{% endfor %}
+			</select>
+			<input id="tier_price" type="number" name="tierPrice" placeholder="Tier price">
+			<input type="submit" name="submit_btn" value="Update Tier">
+			<span></span>
+		</div>
+		
+	</form>
+
+	<h2>Tier Data</h2>
+	<table>
+	    <thead>
+	    	<tr>
+	        	<th>Tier ID</th>
+	        	<th>Tier Name</th>
+	       		<th>Tier Price</th>
+	    	</tr>
+	    </thead>    
+	    <tbody>
+	    {% for tier in tiers %}    
+            <tr>
+                <td>{{tier[0]}}</td>
+                <td>{{tier[1]}}</td>
+                <td>{{tier[2]}}</td>
+            </tr>
+	    {% endfor %}
+	    </tbody>
+	</table>
+
+		
+
+	
+
+{% endblock %}
