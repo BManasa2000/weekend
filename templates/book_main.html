@@ -1,0 +1,137 @@
+{% extends "layout.html" %}
+
+{% block body %}
+    <!-- <ul>
+        {%- for title in titles %}
+            <li><span>{{ title }}</span>
+        {% endfor -%}
+    </ul> -->
+    <!-- <script type = "text/javascript" src = "book_main.js"></script> -->
+
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.0/jquery.min.js"></script>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-eOJMYsd53ii+scO/bJGFsiCZc+5NDVN2yr8+0RDqr0Ql0h+rP48ckxlpbzKgwra6" crossorigin="anonymous">
+
+    <div id = "div_books">
+    <table id = "book_list" class="table table-striped">
+        <th>ISBN</th>
+        <th>Title</th>
+        <th>Author</th>
+        <th>Genre</th>
+        <th>Tier</th>
+        <th>Read</th>
+        {%- for book in books %}
+            <tr>
+                <td>{{ book[0] }}</td>
+                <td>{{ book[1] }}</td>
+                <td>{{ book[2] }}</td>
+                <td>{{ book[3] }}</td>
+                <td>{{ book[4] }}</td>
+                <td><a href = "{{ url_for('pdf_display', filename = book[5]) }}" >Read</a></td>
+                <!-- <td>
+                    <ul>
+                        {%- for genre in book.genre %}
+                            <li>{{genre}}
+                        {% endfor -%}
+                    </ul>
+                </td> -->
+            </tr>
+        {% endfor -%}
+    </table>
+    </div>
+
+    <div class = "genres form-check">
+        {%- for genre in genres %}
+            <label>
+                <input class="form-check-input" type = "checkbox" name = "genre" value = {{ genre }}>
+                {{ genre }}
+            </label>
+            <br>
+        {% endfor -%}
+
+        <button id = "filter_gen">Filter</button>
+    </div>
+    <div id = "tex"></div>
+
+    <script type="text/javascript">
+
+        $(function(){
+            $('button').click(function(){
+                var checked = document.querySelectorAll("input[type=checkbox]:checked");
+                var genres = [];
+                for (var i = 0; i < checked.length; i++) {
+                    genres.push(checked[i].value);
+                }
+                // var user = $('#inputUsername').val();
+                // var pass = $('#inputPassword').val();
+                var json_genres = JSON.stringify(genres);
+                $.ajax({
+                    url: '/filterBooks',
+                    type: 'POST',
+                    contentType: 'application/json',
+                    dataType : 'json',
+                    data : json_genres,
+                    success: function(data){
+                        // data.forEach(function(book) => {
+                        //     $('#tex').innerHTML = book.title;
+                        // })
+                        var len = 0;
+                        for (book in data)
+                        {
+                            len++;
+                        }
+
+                        alert(data);
+                        var html = '';
+                        html += '<table id = "book_list" class="table table-striped">';
+                        html += '<th>ISBN</th>';
+                        html += '<th>Title</th>';
+                        html += '<th>Author</th>';
+                        html += '<th>Genre</th>';
+                        html += '<th>Tier</th>';
+                        html += '<th>Read</th>';
+
+                        for (var i = 0; i < len; i++) 
+                        {
+                            html += '<tr>'
+                            html += '<td>' + data[i][0] + '</td>';
+                            html += '<td>' + data[i][1] + '</td>';
+                            html += '<td>' + data[i][2] + '</td>';
+                            html += '<td>' + data[i][3] + '</td>';
+                            html += '<td>' + data[i][4] + '</td>';
+                            html += '<td>' + "r" + '</td>';
+                            html += '</tr>';
+                        }
+                        html += '</table>';
+                        document.getElementById('div_books').innerHTML = html;
+                    },
+                    error: function(error){
+                        console.log(error);
+                    }
+                });
+            });
+        });
+
+        /*function filter_gen()
+        {
+            var checked = document.querySelectorAll("input[type=checkbox]:checked");
+            var genres = [];
+            for (var i = 0; i < checked.length; i++) {
+                genres.push(checked[i].value);
+            }
+            document.getElementById('tex').innerHTML = genres[0];
+            alert(genres);
+        };*/
+    </script>
+{% endblock %}
+
+
+
+
+
+
+
+
+
+
+
+
