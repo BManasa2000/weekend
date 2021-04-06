@@ -67,8 +67,13 @@ def filter():
     books = json.dumps(books)
     return books
 
-@app.route('/pdfDisplay/<filename>', methods = ['GET', 'POST'])
-def pdf_display(filename):
+@app.route('/pdfDisplay/<isbn>', methods = ['GET', 'POST'])
+def pdf_display(isbn):
+    conn = mysql.connection
+    cur = conn.cursor()
+    sql = "SELECT fileName FROM book where ISBN = " + isbn;
+    cur.execute(sql)
+    filename = (cur.fetchone())[0]
     print(filename)
     return render_template('pdf_display.html', filename = filename)
 
@@ -89,13 +94,6 @@ def upload_file():
         tierID = 1
         genre = form.get("genre")
         name = request.files['file'].filename 
-        # print(form.get("isbn"))
-        # print(form.get("title"))
-        # print(form.get("author"))
-        # print(form.get("genre"))
-        # print("==============================================")
-        # print(name)
-        # print("==============================================")
         if (not name):
             print('No file')
             flag = 1

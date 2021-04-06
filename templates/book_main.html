@@ -26,7 +26,7 @@
                 <td>{{ book[2] }}</td>
                 <td>{{ book[3] }}</td>
                 <td>{{ book[4] }}</td>
-                <td><a href = "{{ url_for('pdf_display', filename = book[5]) }}" >Read</a></td>
+                <td><a href = "{{ url_for('pdf_display', isbn = book[0]) }}" >Read</a></td>
                 <!-- <td>
                     <ul>
                         {%- for genre in book.genre %}
