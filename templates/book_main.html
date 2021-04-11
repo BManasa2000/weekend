@@ -1,127 +1,342 @@
 {% extends "layout.html" %}
 
 {% block body %}
-    <!-- <ul>
-        {%- for title in titles %}
-            <li><span>{{ title }}</span>
-        {% endfor -%}
-    </ul> -->
-    <!-- <script type = "text/javascript" src = "book_main.js"></script> -->
+	<!-- <ul>
+		{%- for title in titles %}
+			<li><span>{{ title }}</span>
+		{% endfor -%}
+	</ul> -->
+	<!-- <script src = "static/js/book_main.js"></script> -->
+	<style>
+	body {
+		content: "";
+	  	background-image: url('/static/library4.jpg');
+		background-size: cover;
+		position: absolute;
+		top: 0px;
+		right: 0px;
+		bottom: 0px;
+		left: 0px;
+		opacity: 0.75;
+	}
 
-    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.0/jquery.min.js"></script>
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-eOJMYsd53ii+scO/bJGFsiCZc+5NDVN2yr8+0RDqr0Ql0h+rP48ckxlpbzKgwra6" crossorigin="anonymous">
+	div {
+		opacity: 1;
+		font-weight: bold;
+		color:black;
+	}
 
-    <div id = "div_books">
-    <table id = "book_list" class="table table-striped">
-        <th>ISBN</th>
-        <th>Title</th>
-        <th>Author</th>
-        <th>Genre</th>
-        <th>Tier</th>
-        <th>Read</th>
-        {%- for book in books %}
-            <tr>
-                <td>{{ book[0] }}</td>
-                <td>{{ book[1] }}</td>
-                <td>{{ book[2] }}</td>
-                <td>{{ book[3] }}</td>
-                <td>{{ book[4] }}</td>
-                <td><a href = "{{ url_for('pdf_display', isbn = book[0]) }}" >Read</a></td>
-                <!-- <td>
-                    <ul>
-                        {%- for genre in book.genre %}
-                            <li>{{genre}}
-                        {% endfor -%}
-                    </ul>
-                </td> -->
-            </tr>
-        {% endfor -%}
-    </table>
-    </div>
+	button {
+		opacity: 1;
+		font-weight: bold;
+		color:black;
+	}
+	</style>
 
-    <div class = "genres form-check">
-        {%- for genre in genres %}
-            <label>
-                <input class="form-check-input" type = "checkbox" name = "genre" value = {{ genre }}>
-                {{ genre }}
-            </label>
-            <br>
-        {% endfor -%}
+	<!-- <img src="/static/library.png"> -->
+	<!-- <div class = "bgimage" style="background-image: url('/static/library3.jpg'));"> -->
 
-        <button id = "filter_gen">Filter</button>
-    </div>
-    <div id = "tex"></div>
+	<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.0/jquery.min.js"></script>
+	<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-eOJMYsd53ii+scO/bJGFsiCZc+5NDVN2yr8+0RDqr0Ql0h+rP48ckxlpbzKgwra6" crossorigin="anonymous">
 
-    <script type="text/javascript">
+	<nav class="navbar navbar-expand-lg navbar-light bg-light">
+	  <div class="container-fluid">
+		<a class="navbar-brand" href="#">BOOKS</a>
+		<!-- <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation"> -->
+		  <!-- <span class="navbar-toggler-icon"></span> -->
+		</button>
+		<div class="collapse navbar-collapse" id="navbarSupportedContent">
+		  <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+			
+			<li class="nav-item" style='margin-right:16px'>
+			  <button class="nav-link active" aria-current="page" onclick="showShelf('Allowed')" role="tabpanel">For me
+			  </button>
+			</li>
 
-        $(function(){
-            $('button').click(function(){
-                var checked = document.querySelectorAll("input[type=checkbox]:checked");
-                var genres = [];
-                for (var i = 0; i < checked.length; i++) {
-                    genres.push(checked[i].value);
-                }
-                // var user = $('#inputUsername').val();
-                // var pass = $('#inputPassword').val();
-                var json_genres = JSON.stringify(genres);
-                $.ajax({
-                    url: '/filterBooks',
-                    type: 'POST',
-                    contentType: 'application/json',
-                    dataType : 'json',
-                    data : json_genres,
-                    success: function(data){
-                        // data.forEach(function(book) => {
-                        //     $('#tex').innerHTML = book.title;
-                        // })
-                        var len = 0;
-                        for (book in data)
-                        {
-                            len++;
-                        }
 
-                        alert(data);
-                        var html = '';
-                        html += '<table id = "book_list" class="table table-striped">';
-                        html += '<th>ISBN</th>';
-                        html += '<th>Title</th>';
-                        html += '<th>Author</th>';
-                        html += '<th>Genre</th>';
-                        html += '<th>Tier</th>';
-                        html += '<th>Read</th>';
+			<li class="nav-item" style='margin-right:16px'>
+			  <button class="nav-link active" aria-current="page" onclick="showShelf('Continue')" role="tabpanel">Read on
+			  </button>
+			</li>
 
-                        for (var i = 0; i < len; i++) 
-                        {
-                            html += '<tr>'
-                            html += '<td>' + data[i][0] + '</td>';
-                            html += '<td>' + data[i][1] + '</td>';
-                            html += '<td>' + data[i][2] + '</td>';
-                            html += '<td>' + data[i][3] + '</td>';
-                            html += '<td>' + data[i][4] + '</td>';
-                            html += '<td>' + "r" + '</td>';
-                            html += '</tr>';
-                        }
-                        html += '</table>';
-                        document.getElementById('div_books').innerHTML = html;
-                    },
-                    error: function(error){
-                        console.log(error);
-                    }
-                });
-            });
-        });
+			<li class="nav-item" style='margin-right:16px'>
+			  <button class="nav-link active" aria-current="page" onclick="showShelf('Unavailable')" role="tabpanel">Premium
+			  </button>
+			</li>
 
-        /*function filter_gen()
-        {
-            var checked = document.querySelectorAll("input[type=checkbox]:checked");
-            var genres = [];
-            for (var i = 0; i < checked.length; i++) {
-                genres.push(checked[i].value);
-            }
-            document.getElementById('tex').innerHTML = genres[0];
-            alert(genres);
-        };*/
-    </script>
+			<li class="nav-item" style='margin-right:16px'>
+			  <button class="nav-link active" aria-current="page" onclick="search()" role="tabpanel">Search Results
+			  </button>
+			</li>
+
+		  </ul>
+
+		  <div class="d-flex">
+			<input id = "search_by" class="form-control me-2" type="search" placeholder="Search" aria-label="Search">
+			<button id = "search" class="btn btn-outline-success" onclick = "search()">Search</button>
+		  
+		  </div>
+		</div>
+	  </div>
+	</nav>
+
+	<!-- <nav class = "navbar navbar-expand-lg navbar-light bg-light">    
+		<div class="nav nav-tabs" >
+		  <button class="nav-link" onclick="showShelf('Allowed')" role="tabpanel">For me</button>
+		  <button class="nav-link" onclick="showShelf('Continue')" role="tabpanel">Continue reading...</button>
+		  <button class="nav-link" onclick="showShelf('Unavailable')" role="tabpanel">Premium</button>
+		</div>
+	</nav> -->
+
+<div class ="library">
+	<div id = "Allowed" class="shelf tab-pane fade show active">
+		<table>
+			<tr>
+				<th></th>
+				<th>Filter by</th>
+			</tr>
+			<tr>
+				<td class="col col-lg-11">
+					<table id = "book_list1" class="table table-hover">
+					</table>
+				</td>
+				<td class="col col-lg-2">
+					<div class = "genres form-check form-control-lg">
+						{%- for genre in genres %}
+							<label>
+								<input class="form-check-input" type = "checkbox" name = "genre" value = {{ genre }}>
+								{{ genre[0] }}
+							</label>
+							<br>
+						{% endfor -%}
+						<button id = "filter_gen1" onclick= "filter('book_list1')">Filter</button>
+					</div>
+				</td>
+			</tr>
+		</table>
+	</div>
+
+	<!-- Continue reading book shelf -->
+	<div id = "Continue" class="shelf tab-pane show fade" style="display:none">
+		<table>
+			<tr>
+				<th></th>
+				<th>Filter by</th>
+			</tr>
+			<tr>
+				<td class="col col-lg-11">
+					<table id = "book_list2" class="table table-hover">
+					</table>
+				</td>
+				<td class="col col-lg-2">
+					<div class = "genres form-check form-control-lg">
+						{%- for genre in genres %}
+							<label>
+								<input class="form-check-input" type = "checkbox" name = "genre" value = {{ genre }}>
+								{{ genre[0] }}
+							</label>
+							<br>
+						{% endfor -%}
+						<button id = "filter_gen2" onclick= "filter('book_list2')">Filter</button>
+					</div>
+				</td>
+			</tr>
+		</table>
+	</div>
+
+	<!-- Unavailable book shelf -->
+	<div id = "Unavailable" class="shelf tab-pane show fade" style="display:none">
+		<table>
+			<tr>
+				<th></th>
+				<th>Filter by</th>
+			</tr>
+			<tr>
+				<td class="col col-lg-11">
+					<table id = "book_list3" class="table table-hover">
+					</table>
+				</td>
+				<td class="col col-lg-2">
+					<div class = "genres form-check form-control-lg">
+						{%- for genre in genres %}
+							<label>
+								<input class="form-check-input" type = "checkbox" name = "genre" value = {{ genre }}>
+								{{ genre[0] }}
+							</label>
+							<br>
+						{% endfor -%}
+						<button id = "filter_gen3" onclick= "filter('book_list3')">Filter</button>
+					</div>
+				</td>
+			</tr>
+		</table>
+	</div>
+
+	<div id = "Search_div" class="shelf tab-pane show fade" style="display:none">
+		<table>
+			<tr>
+				<th></th>
+				<th>Filter by</th>
+			</tr>
+			<tr>
+				<td class="col col-lg-11">
+					<table id = "search_list" class="table table-hover">
+					</table>
+				</td>
+				<td class="col col-lg-2">
+					<div class = "genres form-check form-control-lg">
+						{%- for genre in genres %}
+							<label>
+								<input class="form-check-input" type = "checkbox" name = "genre" value = {{ genre }}>
+								{{ genre[0] }}
+							</label>
+							<br>
+						{% endfor -%}
+						<button id = "search_list" onclick= "filter('search_list')">Filter</button>
+					</div>
+				</td>
+			</tr>
+		</table>
+	</div>
+</div>
+
+	<script type="text/javascript">
+
+		// on loading page
+		$(document ).ready(function(){
+			showShelf("Allowed");
+		});
+
+
+// ############################################################################################
+		// for changing the shelf
+		function showShelf(shelfName) {
+			var i;
+			var x = document.getElementsByClassName("shelf");
+			for (i = 0; i < x.length; i++) {
+			  x[i].style.display = "none";
+			}
+			var books;
+			var tableName;
+			if (shelfName == "Allowed")
+			{
+				tableName = "book_list1";
+				books = JSON.parse('{{ allowed_books | tojson | safe}}');
+			}
+			else if(shelfName == "Continue")
+			{
+				tableName = "book_list2";
+				books = JSON.parse('{{ read_books | tojson | safe}}');
+			}
+			else if(shelfName == "Unavailable")
+			{
+				tableName = "book_list3";
+				books = JSON.parse('{{ unavailable_books | tojson | safe}}');
+			}
+			else
+			{
+				tableName = "search_list";
+				books = JSON.parse('{{ search_books | tojson | safe}}');
+
+			}
+			build_table(tableName, books);
+			document.getElementById(shelfName).style.display = "block";
+		}
+// ############################################################################################
+		function filter(tableName){
+			var checked = document.querySelectorAll("input[type=checkbox]:checked");
+			var genres = [];
+			genres.push(tableName);
+			for (var i = 0; i < checked.length; i++) {
+				genres.push(checked[i].value);
+				checked[i].checked = false;
+			}
+			// var user = $('#inputUsername').val();
+			// var pass = $('#inputPassword').val();
+			var json_genres = JSON.stringify(genres);
+			// alert(typeof(json_genres));
+			$.ajax({
+				url: '/filterBooks',
+				type: 'POST',
+				contentType: 'application/json',
+				dataType : 'json',
+				data : json_genres,
+				success: function(data){
+					build_table(tableName, data);
+				},
+				error: function(error){
+					console.log(error);
+				}
+			});
+		}
+
+// ############################################################################################
+		// for searching books
+		function search() {
+		   var search_by = document.getElementById("search_by").value;
+		   document.getElementById("search_by").value = "";
+		   var json_search_by = JSON.stringify(search_by);
+		   $.ajax({
+				url: '/searchBooks',
+				type: 'POST',
+				contentType: 'application/json',
+				dataType : 'json',
+				data : json_search_by,
+				success: function(data){
+					var i;
+					var x = document.getElementsByClassName("shelf");
+					for (i = 0; i < x.length; i++) {
+					  x[i].style.display = "none";
+					}
+					build_table("search_list", data);
+					document.getElementById("Search_div").style.display = "block";					
+				},
+				error: function(error){
+					console.log(error);
+				}
+			}); 
+		}
+
+		// build table
+		function build_table(tableName, books){
+			var user = "{{userTier}}";
+			user = parseInt(user);
+			var html = '';
+			// html += '<table id = "' + tablename + '" class="table table-striped">';
+			html += '<thread class="thead-dark">';
+			html += '<tr>';
+			html += '<th scope="col">Book</th>';
+			html += '<th scope="col">Title</th>';
+			html += '<th scope="col">Author</th>';
+			html += '<th scope="col">Genre</th>';
+			html += '<th scope="col">Read</th>';
+			html += '</tr>';
+			html += '</thread>';
+
+			for (var j = 0; j < books.length; j++) {
+				html += '<tr>';
+				html += '<td scope="row" style="color:#000066;">' + (j + 1) + '</td>';
+				html += '<td style="color:#000066;">' + books[j][1] + '</td>';
+				html += '<td style="color:#000066;">' + books[j][2] + '</td>';
+				html += '<td style="color:#000066;">' + books[j][3] + '</td>';
+				// html += '<td>' + books[j][4] + '</td>';
+
+				var url;
+				if (user >= books[j][4])
+				{
+					url = "/pdfDisplay/"+ books[j][0];
+					html += '<td>' + "<a href = " + url + " style='color:#000099;'>Read</a>" + '</td>';
+				}
+				else
+				{
+					url = "/upgrade/" + books[j][4];
+					html += '<td>' + "<a href = " + url + " style='color:#000099;'>Upgrade!</a>" + '</td>';
+				}
+				html += '</tr>';
+			}
+			document.getElementById(tableName).innerHTML = html;
+		}
+	</script>
 {% endblock %}
 
 

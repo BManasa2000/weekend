@@ -8,6 +8,8 @@
     <h1>Add Book</h1>
     <form action="{{url_for('upload_file')}}" method=post enctype=multipart/form-data>
 
+        <br>
+
         <div class="form-group row">
             <label for="isbn">ISBN</label>
             <div class="col-sm-10">
@@ -39,6 +41,15 @@
             <label for="genre">Genre</label>
             <div class="col-sm-10">
                 <input type="text" id="genre" name="genre" class="form-control" placeholder="Genre">
+            </div>
+        </div>
+
+        <br>
+
+        <div class="form-group row">
+            <label for="tierName">Tier_name</label>
+            <div class="col-sm-10">
+                <input type="text" id="tierName" name="tierName" class="form-control" placeholder="Tier Name">
             </div>
         </div>
 
