@@ -1,4 +1,4 @@
-from flask import Flask, render_template, request, flash, redirect, url_for
+from flask import Flask, render_template, request, flash, redirect, url_for, session
 from werkzeug.utils import secure_filename  # for uploading files to server
 from flask_mysql_connector import MySQL
 import os
@@ -16,32 +16,10 @@ app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
 app.config['UPLOAD_FOLDER_IMAGES'] = UPLOAD_FOLDER_IMAGES
 
 app.config['MYSQL'] = 'localhost'
-# changed MYSQL_HOST to MYSQL
 app.config['MYSQL_USER'] = 'root'
 app.config['MYSQL_PASSWORD'] = '12345678'
-# app.config['MYSQL_DB'] = 'dbs1'
 app.config['MYSQL_DATABASE'] = 'dbs1'
 
-
-
-
-# @app.route('/', methods=['GET', 'POST'])
-# def index():
-#     if request.method == "POST":
-#         details = request.form
-#         firstName = details['fname']
-#         lastName = details['lname']
-#         cur = mysql.connection.cursor()
-#         cur.execute("INSERT INTO Admin(AdminName, AdminPassword) VALUES (%s, %s)", (firstName, lastName))
-#         mysql.connection.commit()
-#         cur.close()
-#         return 'success'
-#     return render_template('admin.html')
-#     #return render_template('index.html')
-
-
-# if __name__ == '__main__':
-#     app.run()
 
 
 @app.route('/admin', methods=['GET', 'POST'])
@@ -51,29 +29,16 @@ def admin():
 @app.route('/admin/tier', methods=['GET', 'POST'])
 def admintier():
     cur = mysql.connection.cursor()
-    # rows = cur.execute("SELECT tierName FROM Tier")
     rows = cur.execute("SELECT * FROM Tier")
     tiers = cur.fetchall()
-    # for tier in tiers:
-            #one = tier[0]
-            # two = tier[1]
-            # print('===============================================')
-            # #print('oneee', one)
-            # print('twooo', two)
-            # print('===============================================')
 
     if request.method == "POST":
         if request.form['submit_btn'] == 'Add Tier':
-            # details = request.form
-            # tiername = details['tierName']
-            # tierprice = details['tierPrice']
             tiername = request.form.get("tierName")
             tierprice = request.form.get("tierPrice")
             # cur = mysql.connection.cursor()
             if not tiername or not tierprice:
                 return "Fields can not be empty" #CAN MAKE HTML FILE
-            # rows = cur.execute("SELECT tierName FROM Tier")
-            # tiers = cur.fetchall()
             dupTier = True
             for tier in tiers:
                 tierVal = tier[1]
@@ -108,27 +73,7 @@ def admintier():
             cur.execute("UPDATE Tier SET tierPrice = %(tierprice)s WHERE tierID = %(tierid)s", { 'tierprice': tierprice, 'tierid': tierid})
             mysql.connection.commit()
             # return 'success'
-    # if request.method == "POST":
-    #     # details = request.form
-    #     # tiername = details['tierName']
-    #     # tierprice = details['tierPrice']
-    #     tiername = request.form.get("tierName")
-    #     tierprice = request.form.get("tierPrice")
-    #     # cur = mysql.connection.cursor()
-    #     if not tiername or not tierprice:
-    #         return "Fields can not be empty" #CAN MAKE HTML FILE
-    #     # rows = cur.execute("SELECT tierName FROM Tier")
-    #     # tiers = cur.fetchall()
 
-
-
-    #     # for tier in tiers:#///////////////////////////////
-    #     #     if tiername in tier:
-    #     #         return 'duplicate' #CAN MAKE HTML FILE
-    #     cur.execute("INSERT INTO Tier (tierName, tierPrice) VALUES (%s, %s)",(tiername, tierprice))
-    #     mysql.connection.commit()
-    #     # cur.close()
-    #     return 'success'
 
     cur.close()
     return render_template('admintier.html', tiers = tiers)
@@ -154,17 +99,7 @@ def adminbook():
             #print('oneee', one)
             print(genre)
             print('=============================================')
-            # sql = "INSERT INTO GenreTable (genre) VALUES (%s);"
-            # val = genre
-            # cur.execute(sql, val)
-            # sql = ("INSERT INTO GenreTable "
-            #     "(genre) "
-            #     "VALUES (%s)")
-            # val = (genre)
-            # cur.execute(sql, val)
             cur.execute("INSERT INTO GenreTable (genre) VALUES (%s)",(genre,))
-            #cur.execute("INSERT INTO Tier (tierName, tierPrice) VALUES (%s, %s)",(tiername, tierprice))
-            #cur.execute("INSERT INTO GenreTable (genre) VALUES %s", (genre)) 
             mysql.connection.commit()
             #return render_template('adminbook.html', tiers = tiers, books = books, genres = genres, flag = 0)
         elif request.form['submit_btn'] == 'Delete Genre':
@@ -209,9 +144,6 @@ def adminbook():
                 sql = "INSERT into Book (ISBN, bookName, author, genreID, tierID, fileName) VALUES (%s, %s, %s, %s, %s, %s);"
                 val = (isbn, bookname, author, genre, tierid, name)
                 cur.execute(sql, val)
-                # file = request.files['file']
-                # file.save(os.path.join(app.config['UPLOAD_FOLDER'], secure_filename(file.filename)))
-                # cur.execute("INSERT INTO Book (ISBN, bookName, author, genre, tierID, secure_filename) VALUES (%s, %s, %s, %s, %s, %s)",(isbn, bookname, author, genre, tierid, name))
                 mysql.connection.commit()
             
             # cur.close()
@@ -273,27 +205,6 @@ def adminbook():
             # cur.execute("UPDATE Tier SET tierPrice = %(tierprice)s WHERE tierID = %(tierid)s", { 'tierprice': tierprice, 'tierid': tierid})
             mysql.connection.commit()
             # return 'success'
-    # if request.method == "POST":
-    #     # details = request.form
-    #     # tiername = details['tierName']
-    #     # tierprice = details['tierPrice']
-    #     tiername = request.form.get("tierName")
-    #     tierprice = request.form.get("tierPrice")
-    #     # cur = mysql.connection.cursor()
-    #     if not tiername or not tierprice:
-    #         return "Fields can not be empty" #CAN MAKE HTML FILE
-    #     # rows = cur.execute("SELECT tierName FROM Tier")
-    #     # tiers = cur.fetchall()
-
-
-
-    #     # for tier in tiers:#///////////////////////////////
-    #     #     if tiername in tier:
-    #     #         return 'duplicate' #CAN MAKE HTML FILE
-    #     cur.execute("INSERT INTO Tier (tierName, tierPrice) VALUES (%s, %s)",(tiername, tierprice))
-    #     mysql.connection.commit()
-    #     # cur.close()
-    #     return 'success'
 
     cur.close()
     return render_template('adminbook1.html', tiers = tiers, books = books, genres = genres, flag = 0)
@@ -353,17 +264,7 @@ def adminitem():
             #print('oneee', one)
             print(category)
             print('=============================================')
-            # sql = "INSERT INTO GenreTable (genre) VALUES (%s);"
-            # val = genre
-            # cur.execute(sql, val)
-            # sql = ("INSERT INTO GenreTable "
-            #     "(genre) "
-            #     "VALUES (%s)")
-            # val = (genre)
-            # cur.execute(sql, val)
             cur.execute("INSERT INTO CategoryTable (category) VALUES (%s)",(category,))
-            #cur.execute("INSERT INTO Tier (tierName, tierPrice) VALUES (%s, %s)",(tiername, tierprice))
-            #cur.execute("INSERT INTO GenreTable (genre) VALUES %s", (genre)) 
             mysql.connection.commit()
             #return render_template('adminbook.html', tiers = tiers, books = books, genres = genres, flag = 0)
         elif request.form['submit_btn'] == 'Delete Category':
@@ -390,26 +291,12 @@ def adminitem():
                 # return redirect(request.url)
             
             dupitem = True
-            # for book in books:
-            #     isbnVal = book[0]
-            #     print('===============================================')
-            #     print(isbnVal, int(isbn))
-            #     print('===============================================')
-            #     if int(isbnVal) == int(isbn):
-            #         dupbook = False
-            #         return render_template("adminbook1.html", dupbook = dupbook, tiers = tiers, books = books, genres = genres)
-            #         # duplicateflag = 1
-            #         # return render_template("adminbook1.html", flag = flag)
-            #          #CAN MAKE HTML FILE
             if (dupitem):
                 file = request.files['file']
                 file.save(os.path.join(app.config['UPLOAD_FOLDER_IMAGES'], secure_filename(file.filename)))
                 sql = "INSERT into Item (itemName, itemPrice, itemImage, categoryID, brand, description, stock) VALUES (%s, %s, %s, %s, %s, %s, %s);"
                 val = (itemname, itemprice, name, categoryid, itembrand, description, itemstock)
                 cur.execute(sql, val)
-                # file = request.files['file']
-                # file.save(os.path.join(app.config['UPLOAD_FOLDER'], secure_filename(file.filename)))
-                # cur.execute("INSERT INTO Book (ISBN, bookName, author, genre, tierID, secure_filename) VALUES (%s, %s, %s, %s, %s, %s)",(isbn, bookname, author, genre, tierid, name))
                 mysql.connection.commit()
             
             # cur.close()
@@ -417,28 +304,6 @@ def adminitem():
         elif request.form['submit_btn'] == 'Delete Item':
             itemname = request.form.get("itemDel")
             itembrand = request.form.get("itemDelBrand")
-            # mismatch = True
-            # if not isbn and not bookname:
-            #     return "Both fields can not be empty"
-            # elif not bookname:
-            #     cur.execute("DELETE FROM Book WHERE ISBN = %(isbn)s", { 'isbn': isbn })
-            # elif not isbn:
-            #     cur.execute("DELETE FROM Book WHERE bookName = %(bookname)s", { 'bookname': bookname })
-            # #isbn and name not same issue to be catered for
-            # elif isbn and bookname:
-            # row = cur.execute("SELECT bookName FROM Book WHERE ISBN = %(isbn)s", { 'isbn': isbn })
-            # valbookName = cur.fetchall()
-            print('===============================================')
-            print(itemname, itembrand)
-            print('===============================================')
-            # if valbookName[0][0] == bookname:
-            #     print('===============================================')
-            #     print("vaah")
-            #     print('===============================================')
-            #     cur.execute("DELETE FROM Book WHERE ISBN = %(isbn)s", { 'isbn': isbn })
-            # else:
-            #     mismatch = False
-            #     return render_template("adminItem.html", mismatch = mismatch, categories = categories, items = items, flag = 0)
             cur.execute("DELETE FROM Item WHERE itemName = %(itemname)s AND brand = %(itembrand)s", { 'itemname': itemname, 'itembrand': itembrand })
             mysql.connection.commit()
             # return 'success'
@@ -454,27 +319,6 @@ def adminitem():
             # cur.execute("UPDATE Tier SET tierPrice = %(tierprice)s WHERE tierID = %(tierid)s", { 'tierprice': tierprice, 'tierid': tierid})
             mysql.connection.commit()
             # return 'success'
-    # if request.method == "POST":
-    #     # details = request.form
-    #     # tiername = details['tierName']
-    #     # tierprice = details['tierPrice']
-    #     tiername = request.form.get("tierName")
-    #     tierprice = request.form.get("tierPrice")
-    #     # cur = mysql.connection.cursor()
-    #     if not tiername or not tierprice:
-    #         return "Fields can not be empty" #CAN MAKE HTML FILE
-    #     # rows = cur.execute("SELECT tierName FROM Tier")
-    #     # tiers = cur.fetchall()
-
-
-
-    #     # for tier in tiers:#///////////////////////////////
-    #     #     if tiername in tier:
-    #     #         return 'duplicate' #CAN MAKE HTML FILE
-    #     cur.execute("INSERT INTO Tier (tierName, tierPrice) VALUES (%s, %s)",(tiername, tierprice))
-    #     mysql.connection.commit()
-    #     # cur.close()
-    #     return 'success'
 
     cur.close()
     return render_template('adminItem.html', categories = categories, items = items, flag = 0)
