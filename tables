@@ -1,0 +1,48 @@
+CREATE TABLE Tier (tierID INT AUTO_INCREMENT, tierName VARCHAR(20) UNIQUE, tierPrice int, PRIMARY KEY(tierID));
+
+CREATE TABLE GenreTable (genreID INT AUTO_INCREMENT, genre VARCHAR(250), PRIMARY KEY(genreID));
+
+
+
+
+CREATE TABLE Book (bookID INT AUTO_INCREMENT, ISBN BIGINT, bookName VARCHAR(250), author VARCHAR(250), genreID INT, tierID INT, fileName varchar(250), PRIMARY KEY(bookID), FOREIGN KEY(tierID) REFERENCES Tier(tierID) ON DELETE CASCADE, FOREIGN KEY(genreID) REFERENCES GenreTable(genreID) ON DELETE CASCADE);
+
+CREATE TABLE Book (ISBN BIGINT PRIMARY KEY, bookName VARCHAR(250), author VARCHAR(250), genre VARCHAR(250), tierID INT, fileName varchar(250), FOREIGN KEY(tierID) REFERENCES Tier(tierID), FOREIGN KEY(genre) REFERENCES GenreTable(genre) ON DELETE CASCADE);
+
+
+CREATE TABLE Book (ISBN BIGINT PRIMARY KEY, bookName VARCHAR(250), author VARCHAR(250), genre VARCHAR(250), tierID INT, fileName varchar(250), FOREIGN KEY(tierID) REFERENCES Tier(tierID), FOREIGN KEY(genre) REFERENCES GenreTable(genre));
+
+
+
+
+
+
+CREATE TABLE User (userID INT AUTO_INCREMENT, emailID VARCHAR(250) UNIQUE, userName VARCHAR(50), userPassword VARCHAR(30), dob DATE, flatNo int, street VARCHAR(250), city VARCHAR(250), state VARCHAR(250), PRIMARY KEY(userID), FOREIGN KEY(tierID) REFERENCES Tier(tierID) ON DELETE CASCADE);
+
+CREATE TABLE User (userID INT AUTO_INCREMENT, emailID VARCHAR(250) UNIQUE, userName VARCHAR(50), userPassword VARCHAR(30), dob DATE, flatNo int, street VARCHAR(250), city VARCHAR(250), state VARCHAR(250), PRIMARY KEY(userID), FOREIGN KEY(tierID) REFERENCES Tier(tierID));
+
+
+
+
+CREATE TABLE Admin (adminID int AUTO_INCREMENT, adminName VARCHAR(250), adminPassword VARCHAR(30), PRIMARY KEY(adminID));
+
+CREATE TABLE CategoryTable (categoryID INT AUTO_INCREMENT, category VARCHAR(250), PRIMARY KEY(categoryID));
+
+CREATE TABLE Item (itemID INT AUTO_INCREMENT, itemName VARCHAR(250), itemPrice INT, itemImage VARCHAR(9000), categoryID INT, brand VARCHAR(250), description VARCHAR(5000), stock INT, PRIMARY KEY(itemID), FOREIGN KEY(categoryID) REFERENCES CategoryTable(categoryID) ON DELETE CASCADE);
+
+CREATE TABLE Contact (phoneNo INT, userID INT, PRIMARY KEY(phoneNO, userID) ,FOREIGN KEY(userID) REFERENCES User(userID) ON DELETE CASCADE);
+
+CREATE TABLE HasRead (userID INT, ISBN BIGINT, PRIMARY KEY(ISBN, userID), FOREIGN KEY(ISBN) REFERENCES Book(ISBN), FOREIGN KEY(userID) REFERENCES User(userID));
+
+CREATE TABLE CART (userID INT, itemID INT, neededQuantity INT, PRIMARY KEY(itemID, userID), FOREIGN KEY(userID) REFERENCES User(userID), FOREIGN KEY(itemID) REFERENCES Item(itemID));
+
+CREATE TABLE Bought (userID INT, itemID INT, boughtQuantity INT, amount INT, boughtDate DATE, boughtTime TIME, PRIMARY KEY(itemID, userID, boughtDate, boughtTime), FOREIGN KEY(userID) REFERENCES User(userID), FOREIGN KEY(itemID) REFERENCES Item(itemID));
+
+
+
+
+
+
+
+
+
