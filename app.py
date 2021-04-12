@@ -24,7 +24,7 @@ app.config['MYSQL_DATABASE'] = 'dbs1'
 
 @app.route('/admin', methods=['GET', 'POST'])
 def admin():
-    return render_template('adminDashboard.html')
+    return render_template('adminHome.html')
 
 @app.route('/admin/tier', methods=['GET', 'POST'])
 def admintier():
@@ -264,8 +264,16 @@ def adminitem():
             #print('oneee', one)
             print(category)
             print('=============================================')
-            cur.execute("INSERT INTO CategoryTable (category) VALUES (%s)",(category,))
-            mysql.connection.commit()
+            dupCategory = True
+            for categoryv in categories:
+                categoryVal = categoryv[1]
+                if category == categoryVal:
+                    dupCategory = False
+                    return render_template('adminItem.html', categories = categories, items = items, flag = 0, dupCategory = dupCategory)
+                    # return 'duplicate' #CAN MAKE HTML FILE
+            if(dupTier):
+                cur.execute("INSERT INTO CategoryTable (category) VALUES (%s)",(category,))
+                mysql.connection.commit()
             #return render_template('adminbook.html', tiers = tiers, books = books, genres = genres, flag = 0)
         elif request.form['submit_btn'] == 'Delete Category':
             categoryid = request.form.get("categoryIDDel")
@@ -291,6 +299,15 @@ def adminitem():
                 # return redirect(request.url)
             
             dupitem = True
+            cur.execute("SELECT * FROM Item WHERE itemName = %(itemname)s AND brand = %(itembrand)s AND description = %(description)s", {'itemname': itemname, 'itembrand': itembrand, 'description': description}) 
+            check = cur.fetchall()
+            print('===============================================')
+            print(check)
+            print('===============================================')
+            if not check:
+                print('in none')
+                dupitem = False
+                return render_template('adminItem.html', categories = categories, items = items, flag = 0, dupitem = dupitem)
             if (dupitem):
                 file = request.files['file']
                 file.save(os.path.join(app.config['UPLOAD_FOLDER_IMAGES'], secure_filename(file.filename)))
@@ -304,7 +321,8 @@ def adminitem():
         elif request.form['submit_btn'] == 'Delete Item':
             itemname = request.form.get("itemDel")
             itembrand = request.form.get("itemDelBrand")
-            cur.execute("DELETE FROM Item WHERE itemName = %(itemname)s AND brand = %(itembrand)s", { 'itemname': itemname, 'itembrand': itembrand })
+            itemdesc = request.form.get("deldescription")
+            cur.execute("DELETE FROM Item WHERE itemName = %(itemname)s AND brand = %(itembrand)s AND description = %(deldescription)s", { 'itemname': itemname, 'itembrand': itembrand, 'deldescription': itemdesc })
             mysql.connection.commit()
             # return 'success'
         elif request.form['submit_btn'] == 'Update Item Stock':
