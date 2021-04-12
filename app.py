@@ -25,9 +25,35 @@ app.config['MYSQL_AUTH_PLUGIN'] = 'mysql_native_password'
 @app.route('/')
 def home():
     username = "Monkey"
-    userTier = "123"
+    userID = "123"
+    userTier = "1"
+    conn = mysql.connection
+    cur = conn.cursor()
+    sql1 = '''SELECT count(*) as num, genreID 
+          from hasread h, book b where h.userID = ''' + userID + '''
+          and b.bookID = h.bookID group by genreID'''
+    sql2 = "SELECT max(num) from (" + sql1 + ") y"
+    cur.execute(sql2)
+    res = cur.fetchone()[0]
+    # print(res)
+    sql3 = "SELECT genreID from (" + sql1 + ") y where num = " + str(res);
+    cur.execute(sql3)
+    res = cur.fetchone()[0]
+    # print(res)
+    genreID = res
+    if genreID is None:
+        cur.execute('''SELECT b.bookID, b.bookName, b.author, g.genre, b.tierID, b.filename 
+                    FROM book b, GenreTable g 
+                    where b.genreID = g.genreID and b.tierID <= ''' + userTier)
+        books = cur.fetchall()
+    else:
+        genreID = str(genreID)
+        cur.execute('''SELECT b.bookID, b.bookName, b.author, g.genre, b.tierID, b.filename 
+                    FROM book b, GenreTable g 
+                    where g.genreID = b.genreID and b.genreID = ''' + genreID + ''' and b.tierID <= ''' + userTier)
+        books = cur.fetchall()
     # return render_template("dashboard.html", username = username, userTier = userTier)
-    return render_template("home.html", emailid="monkey1@gmail.com")
+    return render_template("home.html", emailid="monkey1@gmail.com", books = books, userTier = userTier)
 
 @app.route('/logout')
 def logout():

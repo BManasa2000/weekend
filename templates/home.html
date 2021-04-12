@@ -5,6 +5,58 @@
 {% block header %}Home{% endblock %}
 
 {% block content %}
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.0/jquery.min.js"></script>
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-eOJMYsd53ii+scO/bJGFsiCZc+5NDVN2yr8+0RDqr0Ql0h+rP48ckxlpbzKgwra6" crossorigin="anonymous">
 <h2>Home Page</h2>
 <p>Welcome back, {{ emailid }} }}!</p>
+<p>
+    Recommended books
+    <table id = "book_list" class="table table-hover">
+    </table>
+</p>
+<script type="text/javascript">
+    // for changing the shelf
+    $(document ).ready(function(){
+        var books = JSON.parse('{{ books | tojson | safe}}')
+        build_table("book_list", books);
+    });
+
+    // build table
+    function build_table(tableName, books){
+        // alert(books)
+        var user = "{{userTier}}";
+        user = parseInt(user);
+        var html = '';
+        // html += '<table id = "' + tablename + '" class="table table-striped">';
+        html += '<thread class="thead-dark">';
+        html += '<tr>';
+        html += '<th scope="col">Book</th>';
+        html += '<th scope="col">Title</th>';
+        html += '<th scope="col">Author</th>';
+        html += '<th scope="col">Genre</th>';
+        html += '<th scope="col">Read</th>';
+        html += '</tr>';
+        html += '</thread>';
+
+        for (var j = 0; j < books.length; j++) {
+            html += '<tr>';
+            html += '<td scope="row" style="color:#000066;">' + (j + 1) + '</td>';
+            html += '<td style="color:#000066;">' + books[j][1] + '</td>';
+            html += '<td style="color:#000066;">' + books[j][2] + '</td>';
+            html += '<td style="color:#000066;">' + books[j][3] + '</td>';
+            var url;
+            if (user >= books[j][4])
+            {
+                url = "/pdfDisplay/"+ books[j][0];
+                html += '<td>' + "<a href = " + url + " style='color:#000099;'>Read</a>" + '</td>';
+            }
+            else
+            {
+                url = "/upgrade";
+                html += '<td>' + "<a href = " + url + " style='color:#000099;'>Upgrade!</a>" + '</td>';
+            }
+        }
+        document.getElementById(tableName).innerHTML = html;
+    }
+</script>
 {% endblock %}

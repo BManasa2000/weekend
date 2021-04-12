@@ -1,0 +1,19 @@
+'''SELECT MAX(t2.num), genreID FROM (SELECT COUNT(*) AS num, genreID FROM (select h.bookid as bookid, b.genreID as genreID from hasread h, book b where userID = ''' + userID + ''' and b.bookID = h.bookID) t1 group by genreID) t2'''
+
+SELECT MAX(t2.num), genreID FROM (SELECT COUNT(*) AS num, genreID FROM (select h.bookid as bookid, b.genreID as genreID from hasread h, book b where userID = 123 and b.bookID = h.bookID) t1 group by genreID) t2;
+
+SELECT b.bookID, b.bookName, b.author, g.genre, b.tierID, b.filename 
+FROM book b, GenreTable g 
+where g.genreID = b.genreID and b.genreID = 4
+and b.tierID <= 1;
+
+'''SELECT b.bookID, b.bookName, b.author, g.genre, b.tierID, b.filename 
+FROM book b, GenreTable g 
+where g.genreID = b.genreID and b.genreID = ''' + genreID +
+"and b.tierID <=" + tierID
+
+select max(num), genreID from (select count(*) as num, b.genreID as genreID from hasread h, book b where userID = 123 and b.bookID = h.bookID group by genreID) y;
+
+SELECT max(num) as m from (SELECT count(*) as num, genreID from hasread h, book b where h.userID = 123 and b.bookID = h.bookID group by genreID) y;
+
+select (SELECT max(num) as m from (SELECT count(*) as num, genreID from hasread h, book b where h.userID = 123 and b.bookID = h.bookID group by genreID) y) z;
