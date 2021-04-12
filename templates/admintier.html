@@ -102,6 +102,45 @@
 	</form>
 
 	<br>
+	<form class="validateForm" method="POST">
+		<div> 
+			<h2>Search</h2>
+			<div>
+				<label for="searchTier">Tier</label>
+				<input id="searchTier" type="text" name="searchTier" placeholder="Tier" required>
+				<!-- [a-zA-Z][a-zA-Z0-9\s]* -->
+			</div>
+			<br>
+			<div>
+				<input id="btnSubmit" type="submit" name="submit_btn"  value="Search Tier"> 			
+			</div>
+		</div>
+	</form>
+	<br>
+	{% if searched == true %}
+		<h2>Tier searched</h2>
+		<table class="table">
+		    <thead>
+		    	<tr>
+		        	<th>Tier ID</th>
+		        	<th>Tier Name</th>
+		       		<th>Tier Price</th>
+		    	</tr>
+		    </thead>    
+		    <tbody>
+		    {% for s in searchResults %}    
+	            <tr>
+	                <td>{{s[0]}}</td>
+	                <td>{{s[1]}}</td>
+	                <td>{{s[2]}}</td>
+	            </tr>
+		    {% endfor %}
+		    </tbody>
+		</table>
+
+	{% endif %}
+
+	<br>
 
 	<h2>Tier Data</h2>
 	<table class="table">

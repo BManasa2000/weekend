@@ -221,8 +221,64 @@
 		</div>
 		
 	</form>
-
 	<br>
+	
+	<form class="validateForm" method="POST">
+		<div> 
+			<h2>Search</h2>
+			<div>
+				<label for="searchBook">Title</label>
+				<input id="searchBook" type="text" name="searchBook" placeholder="Title" required>
+				<!-- [a-zA-Z][a-zA-Z0-9\s]* -->
+			</div>
+			<br>
+			<div>
+				<input id="btnSubmit" type="submit" name="submit_btn"  value="Search Book"> 			
+			</div>
+		</div>
+	</form>
+	<br>
+	{% if searched == true %}
+		<h2>Book searched</h2>
+		<table class="table">
+		    <thead>
+		    	<tr>
+				<th>BookID</th>
+	        	<th>ISBN</th>
+	        	<th>Title</th>
+	       		<th>Author</th>
+	       		<th>Genre</th>
+	       		<th>Tier</th>
+				<th>File</th>
+		    	</tr>
+		    </thead>    
+		    <tbody>
+		    {% for b in searchResults %}    
+            <tr>
+                <td>{{b[0]}}</td>
+                <td>{{b[1]}}</td>
+                <td>{{b[2]}}</td>
+                <td>{{b[3]}}</td>
+				{% for genre in genres %}
+					{% if b[4] == genre[0] %}
+						<td>{{genre[1]}}</td>
+					{% endif %}
+				{% endfor %}
+            	{% for tier in tiers %}
+            		{% if tier[0] == b[5] %}
+            			<td>{{tier[1]}}</td>
+            		{% endif %}
+            	{% endfor %}
+				<td>{{b[6]}}</td>
+                
+
+
+            </tr>
+	    {% endfor %}
+		    </tbody>
+		</table>
+
+	{% endif %}
 	<br>
 
 	<h2>Book Data</h2>

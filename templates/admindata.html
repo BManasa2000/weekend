@@ -82,6 +82,44 @@
     </form>
 
     <br>
+    <form class="validateForm" method="POST">
+        <div> 
+            <h2>Search</h2>
+            <div>
+                <label for="searchAdmin">Admin</label>
+                <input id="searchAdmin" type="text" name="searchAdmin" placeholder="Admin Name" required>
+                <!-- [a-zA-Z][a-zA-Z0-9\s]* -->
+            </div>
+            <br>
+            <div>
+                <input id="btnSubmit" type="submit" name="submit_btn"  value="Search Admin">             
+            </div>
+        </div>
+    </form>
+
+    <br>
+    {% if searched == true %}
+        <h2>Admin searched</h2>
+        <table class="table">
+            <thead>
+                <tr>
+                    <th>Admin ID</th>
+                    <th>Admin Name</th>
+                </tr>
+            </thead>    
+            <tbody>
+            {% for a in searchResults %}    
+            <tr>
+                <td>{{a[0]}}</td>
+                <td>{{a[1]}}</td>
+            </tr>
+            {% endfor %}
+            </tbody>
+        </table>
+
+    {% endif %}
+
+    <br>
 
 
     <h2>Admin Data</h2>
@@ -99,7 +137,6 @@
                 <td>{{admin[0]}}</td>
                 <td>{{admin[1]}}</td>
                 <td>{{admin[2]}}</td>
-                <td>{{admin[3]}}</td>
             </tr>
         {% endfor %}
         </tbody>

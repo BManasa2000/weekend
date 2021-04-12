@@ -224,8 +224,59 @@
 	</form>
 
 	<br>
+	<form class="validateForm" method="POST">
+		<div> 
+			<h2>Search</h2>
+			<div>
+				<label for="searchItem">Item</label>
+				<input id="searchItem" type="text" name="searchItem" placeholder="Item" required>
+				<!-- [a-zA-Z][a-zA-Z0-9\s]* -->
+			</div>
+			<br>
+			<div>
+				<input id="btnSubmit" type="submit" name="submit_btn"  value="Search Item"> 			
+			</div>
+		</div>
+	</form>
 	<br>
+	{% if searched == true %}
+		<h2>Item searched</h2>
+		<table class="table">
+		    <thead>
+		    	<tr>
+				<th>ItemID</th>
+	        	<th>Item</th>
+	       		<th>Price</th>
+	       		<th>Image file</th>
+	       		<th>Category</th>
+                <th>Brand</th>
+	        	<th>Description</th>
+	       		<th>Stock</th>
+		    	</tr>
+		    </thead>    
+		    <tbody>
+		    {% for i in searchResults %}    
+            <tr>
+                <td>{{i[0]}}</td>
+                <td>{{i[1]}}</td>
+                <td>{{i[2]}}</td>
+                <td>{{i[3]}}</td>
+                {% for category in categories %}
+                    {% if i[4] == category[0] %}
+                        <td>{{category[1]}}</td>
+                    {% endif %}
+                {% endfor %}
+                <td>{{i[5]}}</td>
+                <td>{{i[6]}}</td>
+                <td>{{i[7]}}</td>
+            </tr>
+	    {% endfor %}
+		    </tbody>
+		</table>
 
+	{% endif %}
+
+	<br>
     <h2>Item Data</h2>
     <table class="table">
 	    <thead>

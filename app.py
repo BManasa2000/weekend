@@ -29,7 +29,7 @@ def admin():
 @app.route('/admin/tier', methods=['GET', 'POST'])
 def admintier():
     cur = mysql.connection.cursor()
-    rows = cur.execute("SELECT * FROM Tier")
+    rows = cur.execute("SELECT * FROM Tier ORDER BY tierName")
     tiers = cur.fetchall()
 
     if request.method == "POST":
@@ -73,6 +73,12 @@ def admintier():
             cur.execute("UPDATE Tier SET tierPrice = %(tierprice)s WHERE tierID = %(tierid)s", { 'tierprice': tierprice, 'tierid': tierid})
             mysql.connection.commit()
             # return 'success'
+        elif request.form['submit_btn'] == 'Search Tier':
+            searchtier = request.form.get("searchTier")
+            cur.execute("SELECT * FROM Tier WHERE tierName = %(searchtier)s ORDER BY tierName", {'searchtier':searchtier})
+            searchResults = cur.fetchall()
+            searched = True
+            return render_template('admintier.html', tiers = tiers, searchResults = searchResults, searched = searched)
 
 
     cur.close()
@@ -85,11 +91,11 @@ def allowed_file(filename):
 @app.route('/admin/book', methods=['GET', 'POST'])
 def adminbook():
     cur = mysql.connection.cursor()
-    rows = cur.execute("SELECT * FROM Book")
+    rows = cur.execute("SELECT * FROM Book ORDER BY tierID, bookName")
     books = cur.fetchall()
-    rows = cur.execute("SELECT * FROM Tier")
+    rows = cur.execute("SELECT * FROM Tier ORDER BY tierName")
     tiers = cur.fetchall()
-    rows = cur.execute("SELECT * FROM GenreTable")
+    rows = cur.execute("SELECT * FROM GenreTable ORDER BY genre")
     genres = cur.fetchall()
 
     if request.method == "POST":
@@ -201,7 +207,13 @@ def adminbook():
                 else:
                     mismatch2 = False
                     return render_template("adminbook1.html", mismatch2 = mismatch2, tiers = tiers, books = books, genres = genres)
-
+            elif request.form['submit_btn'] == 'Search Book':
+                searchbook = request.form.get("searchBook")
+                cur.execute("SELECT * FROM Book WHERE bookName = %(searchbook)s", {'searchbook':searchbook})
+                searchResults = cur.fetchall()
+                searched = True
+                return render_template('adminbook1.html', tiers = tiers, books = books, genres = genres, searchResults = searchResults, searched = searched)
+                # return 'success'
             # cur.execute("UPDATE Tier SET tierPrice = %(tierprice)s WHERE tierID = %(tierid)s", { 'tierprice': tierprice, 'tierid': tierid})
             mysql.connection.commit()
             # return 'success'
@@ -212,7 +224,7 @@ def adminbook():
 @app.route('/admin/admin', methods=['GET', 'POST'])
 def admindata():
     cur = mysql.connection.cursor()
-    rows = cur.execute("SELECT * FROM Admin")
+    rows = cur.execute("SELECT * FROM Admin ORDER BY adminName")
     admins = cur.fetchall()
 
     if request.method == "POST":
@@ -244,6 +256,12 @@ def admindata():
             print('===============================================')
             cur.execute("DELETE FROM Admin WHERE adminName = %(adminname)s", { 'adminname': adminname })
             mysql.connection.commit()
+        elif request.form['submit_btn'] == 'Search Admin':
+            searchadmin = request.form.get("searchAdmin")
+            cur.execute("SELECT * FROM Admin WHERE adminName = %(searchadmin)s ORDER BY adminName", {'searchadmin':searchadmin})
+            searchResults = cur.fetchall()
+            searched = True
+            return render_template('admindata.html',admins = admins, searchResults = searchResults, searched = searched)
         
     cur.close()
     return render_template("admindata.html", admins = admins)
@@ -252,9 +270,9 @@ def admindata():
 @app.route('/admin/item', methods=['GET', 'POST'])
 def adminitem():
     cur = mysql.connection.cursor()
-    rows = cur.execute("SELECT * FROM CategoryTable")
+    rows = cur.execute("SELECT * FROM CategoryTable ORDER BY category")
     categories = cur.fetchall()
-    rows = cur.execute("SELECT * FROM Item")
+    rows = cur.execute("SELECT * FROM Item ORDER BY categoryID, itemName")
     items = cur.fetchall()
 
     if request.method == "POST":
@@ -336,6 +354,13 @@ def adminitem():
             cur.execute("UPDATE Item SET stock = %(itemstock)s WHERE itemName = %(itemname)s AND brand = %(itembrand)s", {'itemstock': itemstock, 'itemname': itemname, 'itembrand': itembrand})
             # cur.execute("UPDATE Tier SET tierPrice = %(tierprice)s WHERE tierID = %(tierid)s", { 'tierprice': tierprice, 'tierid': tierid})
             mysql.connection.commit()
+            # return 'success'
+        elif request.form['submit_btn'] == 'Search Item':
+            searchitem = request.form.get("searchItem")
+            cur.execute("SELECT * FROM Item WHERE itemName = %(searchitem)s ORDER BY brand", {'searchitem':searchitem})
+            searchResults = cur.fetchall()
+            searched = True
+            return render_template('adminItem.html', categories = categories, items = items, searchResults = searchResults, searched = searched)
             # return 'success'
 
     cur.close()
