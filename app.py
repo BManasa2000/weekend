@@ -124,7 +124,7 @@ def adminbook():
             genre = request.form.get("genre")
             name = request.files['file'].filename 
             print(name)
-            if (not name):
+            if (not name or not name.lower().endswith(('.txt', '.pdf'))):
                 print('No file')
                 flag = 1
                 return render_template("adminbook1.html", flag = flag)
