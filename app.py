@@ -29,7 +29,7 @@ def admin():
 @app.route('/admin/tier', methods=['GET', 'POST'])
 def admintier():
     cur = mysql.connection.cursor()
-    rows = cur.execute("SELECT * FROM Tier ORDER BY tierName")
+    rows = cur.execute("SELECT * FROM Tier ORDER BY tierPrice")
     tiers = cur.fetchall()
 
     if request.method == "POST":
@@ -127,7 +127,7 @@ def adminbook():
             if (not name or not name.lower().endswith(('.txt', '.pdf'))):
                 print('No file')
                 flag = 1
-                return render_template("adminbook1.html", flag = flag)
+                return render_template("adminbook1.html", flag = flag, tiers = tiers, books = books, genres = genres)
                 # return redirect(request.url)
             if tierid == None or not isbn or not bookname or not author or not genre:
                 return "Fields can not be empty" #CAN MAKE HTML FILE
@@ -140,7 +140,7 @@ def adminbook():
                 print('===============================================')
                 if int(isbnVal) == int(isbn):
                     dupbook = False
-                    return render_template("adminbook1.html", dupbook = dupbook, tiers = tiers, books = books, genres = genres)
+                    return render_template("adminbook1.html", dupbook = dupbook, tiers = tiers, books = books, genres = genres, flag = 0)
                     # duplicateflag = 1
                     # return render_template("adminbook1.html", flag = flag)
                      #CAN MAKE HTML FILE
@@ -178,7 +178,7 @@ def adminbook():
                     cur.execute("DELETE FROM Book WHERE ISBN = %(isbn)s", { 'isbn': isbn })
                 else:
                     mismatch = False
-                    return render_template("adminbook1.html", mismatch = mismatch, tiers = tiers, books = books, genres = genres)
+                    return render_template("adminbook1.html", mismatch = mismatch, tiers = tiers, books = books, genres = genres, flag = 0)
 
             mysql.connection.commit()
             # return 'success'
@@ -206,13 +206,13 @@ def adminbook():
                     cur.execute("UPDATE Book SET tierID = %(tierid)s WHERE ISBN = %(isbn)s", {'tierid': tierid, 'isbn': isbn})
                 else:
                     mismatch2 = False
-                    return render_template("adminbook1.html", mismatch2 = mismatch2, tiers = tiers, books = books, genres = genres)
+                    return render_template("adminbook1.html", mismatch2 = mismatch2, tiers = tiers, books = books, genres = genres, flag = 0)
             elif request.form['submit_btn'] == 'Search Book':
                 searchbook = request.form.get("searchBook")
                 cur.execute("SELECT * FROM Book WHERE bookName = %(searchbook)s", {'searchbook':searchbook})
                 searchResults = cur.fetchall()
                 searched = True
-                return render_template('adminbook1.html', tiers = tiers, books = books, genres = genres, searchResults = searchResults, searched = searched)
+                return render_template('adminbook1.html', tiers = tiers, books = books, genres = genres, searchResults = searchResults, searched = searched, flag = 0)
                 # return 'success'
             # cur.execute("UPDATE Tier SET tierPrice = %(tierprice)s WHERE tierID = %(tierid)s", { 'tierprice': tierprice, 'tierid': tierid})
             mysql.connection.commit()
