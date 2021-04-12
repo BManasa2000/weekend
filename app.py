@@ -1,4 +1,4 @@
-from flask import Flask, render_template, request, flash, redirect, url_for
+from flask import Flask, render_template, request, flash, redirect, url_for, session
 from werkzeug.utils import secure_filename # for uploading files to server
 from flask_mysql_connector import MySQL
 import json
@@ -17,15 +17,25 @@ app.config['MYSQL_PASSWORD'] = '12345678'
 app.config['MYSQL_DATABASE'] = 'dbs1'
 app.config['MYSQL_AUTH_PLUGIN'] = 'mysql_native_password'
 
+# session['loggedin'] = True
+# session['id'] = user[0]
+# session['emailid'] = "monkey1@gmail.com"
+# msg = 'Logged in successfully !'
+
 @app.route('/')
-def dashboard():
+def home():
     username = "Monkey"
     userTier = "123"
-    return render_template("dashboard.html", username = username, userTier = userTier)
+    # return render_template("dashboard.html", username = username, userTier = userTier)
+    return render_template("home.html", emailid="monkey1@gmail.com")
+
+@app.route('/logout')
+def logout():
+    return "logout"
 
 # for editing profile
-@app.route('/editProfile')
-def edit_profile():
+@app.route('/profile')
+def profile():
     # user = [123, "monkey1@gmail.com", "Monkey2", "Monkey3", "4/4/4444", "5", "Street 6", "City 7", "State 8", 1]
     # phone = ["12345", "678910", "1112131415"]
     # user = [userID, emailID, userName, userPassword, dob, flatNo, street, city, state, tierID]
@@ -34,7 +44,7 @@ def edit_profile():
     userID = str(123)
     cur.execute("SELECT * from user where userID = '" + userID + "'")
     user = cur.fetchone()
-    print(user)
+    # print(user)
     cur.execute("SELECT phoneNo from contact where userID = '" + userID + "'")
     phone = cur.fetchall()
     pcount = len(phone)
@@ -46,15 +56,29 @@ def edit_profile():
     return render_template("profile.html", user = user, tierName = tierName, phone = phone, pcount = pcount)
 
 # for upgrading membership
-@app.route('/upgrade/<toTier>', methods = ['GET', 'POST'])
-def upgrade(toTier):
-    if request.method == 'POST':
-        conn = mysql.connection
-        cur = conn.cursor()
-        cur.execute("SELECT tierName from tier where tierID = " + toTier)
-        tierName = (cur.fetchone())[0]
-        return "upgrade to " + tierName
-    return render_template("upgrade.html")
+@app.route('/upgrade', methods = ['GET', 'POST'])
+def upgrade():
+    conn = mysql.connection
+    cur = conn.cursor()
+    userID = "123"
+    if request.method == "POST":
+        tierID = request.json
+        # print(tierID)
+        cur.execute("UPDATE user set tierID = '" + tierID + "' where userID = '" + userID + "'")
+        mysql.connection.commit()
+        cur.execute("SELECT u.tierID, t.tierName from user u, tier t where userID = " + userID + " and t.tierID = u.tierID")
+        # cur.execute("SELECT tierName from tier where tierID = " + tierID)
+        userTier = cur.fetchone()
+        userTier = json.dumps(userTier)
+        # print(userTier)
+        return userTier
+        # return render_template("dashboard.html")
+    cur.execute("SELECT * from tier")
+    tiers = cur.fetchall()
+    cur.execute("SELECT u.tierID, t.tierName from user u, tier t where userID = " + userID + " and t.tierID = u.tierID")
+    userTier = cur.fetchone()
+    # print(userTier)
+    return render_template("upgrade.html", userID = userID, userTier = userTier, tiers = tiers)
 
 # for displaying book shelves
 @app.route('/books', methods = ['GET', 'POST'])
@@ -86,7 +110,7 @@ def books():
     search_books = cur.fetchall()
     books = []
     # allow_len = len(allowed_books)
-    print(genres)
+    # print(genres)
     return render_template('book_main.html', userTier=1, books=books, allowed_books=allowed_books, read_books = read_books, unavailable_books=unavailable_books, search_books=search_books, genres=genres)
 
 # searching books
@@ -97,7 +121,7 @@ def searchBooks():
     search_books = []
     search_by = request.json
     search_by = "%" + search_by + "%";
-    print(search_by)
+    # print(search_by)
     cur.execute('''SELECT b.bookID, b.bookName, b.author, g.genre, b.tierID, b.filename 
                 FROM book b, GenreTable g 
                 where b.genreID = g.genreID and (author like "''' 
@@ -105,7 +129,7 @@ def searchBooks():
     books = cur.fetchall()
     for book in books:
         search_books.append(book)
-        print(book)
+        # print(book)
     search_books = json.dumps(search_books)
     return search_books
 
@@ -122,13 +146,13 @@ def filter():
     cur = conn.cursor()
     fil_books = []
     genres = request.json
-    print(genres)
+    # print(genres)
     shelf = genres[0]
     for genre in genres[1:]: 
         genre = genre[2:-3]
-        print(type(genre))
-        print(genre)
-        print(shelf)
+        # print(type(genre))
+        # print(genre)
+        # print(shelf)
         if (shelf == "book_list1"):
             cur.execute('''SELECT b.bookID, b.bookName, b.author, g.genre, b.tierID, b.filename 
                         FROM book b, GenreTable g 
@@ -152,7 +176,7 @@ def filter():
         books = cur.fetchall()
         for book in books:
             fil_books.append(book)
-            print(book)
+            # print(book)
         # print(genre)
     fil_books = json.dumps(fil_books)
     return fil_books
@@ -160,7 +184,7 @@ def filter():
 # displaying the selected book
 @app.route('/pdfDisplay/<bookID>', methods = ['GET', 'POST'])
 def pdf_display(bookID):
-    print(bookID)
+    # print(bookID)
     userID = "123"
     conn = mysql.connection
     cur = conn.cursor()
@@ -173,7 +197,7 @@ def pdf_display(bookID):
     flag = 1
     if (not res):
         flag = 0
-    print(flag)
+    # print(flag)
     if (not flag):
         try:
             sql = "INSERT into hasRead (userID, bookID) values (%s, %s)";
@@ -210,14 +234,14 @@ def upload_file():
         tierName = form.get("tierName")
         cur.execute("SELECT tierID from tier where tierName = '" + tierName + "'")
         tierID = cur.fetchone()[0]
-        print(tierID)
-        print(tierName)
+        # print(tierID)
+        # print(tierName)
         genre = form.get("genre")
         cur.execute('SELECT genreID from GenreTable where genre = "' + genre + '"')
         genreID = cur.fetchone()[0]
         name = request.files['file'].filename 
         if (not name):
-            print('No file')
+            # print('No file')
             flag = 1
             return render_template("book_upload.html", flag = flag)
             # return redirect(request.url)
@@ -244,7 +268,7 @@ def shop():
 def cart():
     return "Let's buy!"
 
-print("SUCCESSFUL")
+# print("SUCCESSFUL")
 
 if __name__=='__main__':
     app.run()
