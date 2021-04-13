@@ -262,9 +262,9 @@
 				genres.push(checked[i].value);
 				checked[i].checked = false;
 			}
+			var json_genres = JSON.stringify(genres);
 			// var user = $('#inputUsername').val();
 			// var pass = $('#inputPassword').val();
-			var json_genres = JSON.stringify(genres);
 			// alert(typeof(json_genres));
 			$.ajax({
 				url: '/filterBooks',

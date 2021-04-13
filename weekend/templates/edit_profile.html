@@ -1,0 +1,65 @@
+{% extends 'layout.html' %}
+
+{% block title %}Edit Profile{% endblock %}
+
+{% block content %}
+<h2>Edit Profile</h2>
+<form action="{{ url_for('edit_profile') }}" method="post">
+    <label for="email">
+        <i class="fas fa-envelope"></i>
+    </label>
+    <input type="email" name="email" placeholder="Email" id="email" Value = "{{ account[1] }}" >
+    <br>
+    <label for="username">
+        <i class="fas fa-user"></i>
+    </label>
+    <input type="text" name="username" placeholder="Username" id="username" Value = "{{ account[2] }}">
+    <br>
+
+    <label for="dob">
+        <i class="fas fa-calendar"></i>
+    </label>
+    <input type="text" name="dob" placeholder="Date of Birth" id="dob" Value = "{{ account[4] }}">
+    <br>
+    <label for="flatNo">
+        <i class="fa fa-address-card"></i>
+    </label>
+    <input type="text" name="flatNo" placeholder="Flat Number" id="flatNo" Value = "{{ account[5] }}">
+    <br>
+    <label for="street">
+        <i class="fa fa-address-card"></i>
+    </label>
+    <input type="text" name="street" placeholder="Street" id="street" Value = "{{ account[6] }}">
+    <br>
+    <label for="city">
+        <i class="fa fa-address-card"></i>
+    </label>
+    <input type="text" name="city" placeholder="City" id="city" Value = "{{ account[7] }}">
+    <br>
+    <label for="state">
+        <i class="fa fa-address-card"></i>
+    </label>
+    <input type="text" name="state" placeholder="State" id="state" Value = "{{ account[8] }}">
+    <br>
+
+    <label for="phoneno1">
+        <i class="fa fa-phone"></i>
+    </label>
+    <input type="text" name="phoneno1" placeholder="Phone Number" id="phoneno1" Value = "{{ contact[0][0] }}">
+    <br>
+    {% if length==1 %}
+    <label for="phoneno2">
+        <i class="fa fa-phone"></i>
+    </label>
+    <input type="text" name="phoneno2" placeholder="Addl. Phone Number (Optional)" id="phoneno2">
+    {% else %}
+    <label for="phoneno2">
+        <i class="fa fa-phone"></i>
+    </label>
+    <input type="text" name="phoneno2" placeholder="Addl. Phone Number (Optional)" id="phoneno2" Value = "{{ contact[1][0] }}">
+    {% endif %}
+    <div class="msg">{{ msg }}</div>
+
+    <input type="submit" value="Edit">
+</form>
+{% endblock %}

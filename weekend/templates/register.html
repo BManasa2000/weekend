@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="utf-8">
+		<title>Register</title>
+		<link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+		<link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.7.1/css/all.css">
+	</head>
+	<body>
+		<div class="register">
+			<h1>Register</h1>
+			<div class="links">
+				<a href="{{ url_for('login') }}">Login</a>
+				<a href="{{ url_for('register') }}" class="active">Register</a>
+			</div>
+			<form action="{{ url_for('register') }}" method="post" autocomplete="off">
+                <label for="email">
+					<i class="fas fa-envelope"></i>
+				</label>
+				<input type="email" name="email" placeholder="Email" id="email" required>
+
+				<label for="username">
+					<i class="fas fa-user"></i>
+				</label>
+				<input type="text" name="username" placeholder="Username" id="username" required>
+
+				<label for="password">
+					<i class="fas fa-lock"></i>
+				</label>
+				<input type="password" name="password" placeholder="Password" id="password" required>
+
+                <label for="dob">
+					<i class="fas fa-calendar"></i>
+				</label>
+				<input type="text" name="dob" placeholder="DD/MM/YYYY" id="dob" required>
+
+                <label for="flatNo">
+					<i class="fa fa-address-card"></i>
+				</label>
+				<input type="text" name="flatNo" placeholder="Flat Number" id="flatNo" required>
+
+                <label for="street">
+					<i class="fa fa-address-card"></i>
+				</label>
+				<input type="text" name="street" placeholder="Street" id="street" required>
+
+                <label for="city">
+					<i class="fa fa-address-card"></i>
+				</label>
+				<input type="text" name="city" placeholder="City" id="city" required>
+
+                <label for="state">
+					<i class="fa fa-address-card"></i>
+				</label>
+				<input type="text" name="state" placeholder="State" id="state" required>
+
+
+				<label for="phoneno1">
+					<i class="fa fa-phone"></i>
+				</label>
+				<input type="text" name="phoneno1" placeholder="Phone Number" id="phoneno1" required>
+				<label for="phoneno2">
+					<i class="fa fa-phone"></i>
+				</label>
+				<input type="text" name="phoneno2" placeholder="Addl. Phone Number (Optional)" id="phoneno2">
+
+
+				<div class="msg">{{ msg }}</div>
+
+				<input type="submit" value="Register">
+			</form>
+		</div>
+	</body>
+</html>

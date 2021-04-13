@@ -78,7 +78,7 @@
         var html = "";
         // alert(typeof(tname))
         html += "<div class='row'><h4> Tier : " + tname + "</h4></div>";
-        html += "<div class='row'><h4> Tier : " + price.toString() + "</h4></div>";
+        html += "<div class='row'><h4> Price : " + price.toString() + "</h4></div>";
         html += '<button id = "' + id.toString() + '" type="button" class="btn btn-dark" onclick="pay(this)">Pay</button>';
         document.getElementById("pay_div").innerHTML = html;
         document.getElementById("pay_div").style.display = "block";
