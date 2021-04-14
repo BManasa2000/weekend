@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+
+<html>
+
+<head>
+<meta charset="UTF-8"
+<link rel="stylesheet" href="">
+<link rel="stylesheet" type="text/css" href="https://stackpath.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css">
+</head>
+<body>
+<div class="product-info">
+<form method ="POST" action="/add/{{itemid}}">
+    <img src="{{image}}">
+    <h1>{{name}}</h1>
+    <p>{{message}}</p>
+    <form method ="POST" action="/add">
+    <label for="total_quantity">Qnt: </label>
+    <input type="number" id="total_quantity" name="total_quantity" value="0">
+    <p>₹ {{price}}</p>
+    <p> Brand: {{Brand}}
+    <p>{{Desc}}</p>
+    <button type="button" name="goback"><a href="/home">Continue Shopping</a></button>
+    <input type="submit" name="submit_btn" value="Add To Cart">
+</form>
+</div>
+</body>
+</html>

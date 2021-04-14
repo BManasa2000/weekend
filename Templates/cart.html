@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+
+<html>
+
+<head>
+
+	<title>Shopping Cart</title>
+
+	<link rel="stylesheet" type="text/css" href="/static/styles/cart.css">
+
+	<link rel="stylesheet" type="text/css" href="https://stackpath.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css">
+
+</head>
+
+<body>
+
+<div class="container">
+
+	<h1>Shopping Cart</h1>
+
+	<div class="cart">
+
+		<div class="products">
+		{%- for product in products %}
+			<div class="product">
+
+				<img src="{{product[2]}}">
+
+				<div class="product-info">
+				{%- for itemdet in itemdets %}
+                    {% if itemdets[0] == product[0] %}
+                        <h3 class="product-name">{{itemdets[1]}}</h3>
+                    {% endif %}
+                {% endfor -%}
+
+					<h4 class="product-price">₹ {{product[3]}}</h4>
+
+					<p class="product-quantity">Qnt:{{product[1]}}</p>
+
+					<p class="product-remove">
+
+						<i class="fa fa-trash" aria-hidden="true"></i>
+
+						<button type="button" name="delete"><a href="/delete1/{{product[0]}}" class="btn btn-danger btn-sm">Remove</a></button>
+
+					</p>
+
+				</div>
+
+			</div>
+			{% endfor -%}
+
+		</div>
+
+			<a href="{{url_for('payment')}}"><button class='btn btn-default' name="Proceed">Proceed to Checkout</button></a>
+
+	</div>
+
+</div>
+
+
+
+</body>
+
+
+</html>

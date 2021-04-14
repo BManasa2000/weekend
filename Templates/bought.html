@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+
+<html>
+
+<head>
+
+	<title>Bought Items</title>
+
+	<link rel="stylesheet" type="text/css" href="https://stackpath.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css">
+
+</head>
+
+<body>
+<div class="bought">
+    <h1>Bought Items</h1>
+        <div class="boughttable">
+    	<table class="table" style="width:100%>
+        	<thead class="thead-dark">
+            	<tr>
+                	<th scope="col" class="text-white">Item</th>
+                	<th scope="col" class="text-white"></th>
+                	<th scope="col" class="text-white">Quantity</th>
+	                <th scope="col" class="text-white">Sub-Total</th>
+                	<th scope="col" class="text-white">Date</th>
+	                <th scope="col" class="text-white">Time</th>
+                </tr>
+            </thead>
+            <tbody>
+            <div class="boughtproducts">
+                        {%- for bgtitm in bgtitms %}
+                        <tr>
+                		<div class="item">
+                		<td>
+                    		{% for itmdetail in itmdetails %}
+                                {% if itmdetail[0] == bgtitm[0] %}
+                				<img src="{{itmdetail[2]}}" alt="">
+                				
+                				{% endif %}
+                            {% endfor %}
+            				
+            				</td>
+            				<td>
+            				{% for itmdetail in itmdetails %}
+                                {% if itmdetail[0] == bgtitm[0] %}
+                				
+                				<p class="product-name">{{itmdetail[1]}}</p>
+                				{% endif %}
+                            {% endfor %}
+                            </td>
+            				<td>	
+            				<p class="product-quantity">{{bgtitm[1]}}</p>
+            				
+            				</td>
+            				
+            				<td>	
+            				<p class="product-price">₹{{bgtitm[2]}}</p>
+            				
+            				</td>
+            				<td>	
+            				<p class="product-date">{{bgtitm[3]}}</p>
+            				
+            				</td>
+            				<td>	
+            				<p class="product-time">{{bgtitm[4]}}</p>
+            				
+            				</td>
+            				
+                				
+                		</div>		
+                				</tr>
+                				
+                				{% endfor -%}
+
+			</div></tbody></table>
+			</div></div></body></html>
