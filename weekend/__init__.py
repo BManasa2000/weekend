@@ -5,11 +5,15 @@ app = Flask(__name__)
 # make sure to import these after defining app
 import weekend.homeView
 import weekend.bookView
+import weekend.shopView
+import weekend.adminView
 
 UPLOAD_FOLDER = './static/uploads/'
+UPLOAD_FOLDER_IMAGES = './static/images/'
 ALLOWED_EXTENSIONS = {'txt', 'pdf', 'png', 'jpg', 'jpeg', 'gif'}
 
 app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
+app.config['UPLOAD_FOLDER_IMAGES'] = './static/images/'
 
 app.config['MYSQL_USER'] = 'dbms'
 app.config['MYSQL_PASSWORD'] = '12345678'

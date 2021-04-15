@@ -1,0 +1,44 @@
+{% extends 'layout.html' %}
+
+{% block title %}Checkout{% endblock %}
+
+{% block header %}Checkout{% endblock %}
+
+{% block content %}
+    <!-- <meta name="viewport" content="initial-scale=1,width=device-width"> -->
+    <link rel="stylesheet" type="text/css" href="/static/styles/bought.css">
+    <link rel="stylesheet" type="text/css" href="https://stackpath.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css">
+    <link href="//maxcdn.bootstrapcdn.com/bootstrap/4.1.1/css/bootstrap.min.css" rel="stylesheet" id="bootstrap-css">
+
+    <div class="container">
+      <div class="navbar">
+        <h1>PAYMENT</h1>
+        <nav>
+            <ul>
+                <!-- <li><a href="/">Home</a></li> -->
+                <li><a href="/shop"><img src="/static/shop.png" width="30px" height="30px"></a></li>
+                <li><a href="/shoppingcart"><img src="/static/cart.png" width="30px" height="30px"></a></li>
+                <li><a href="/boughtcart"><img src="/static/bought.png" width="30px" height="30px"></a></li>
+            </ul>
+        </nav>
+      </div>
+    </div>
+
+    <div class="cart-total">
+    	<!-- <h1>Payment</h1> -->
+        {% if total[0] == None %}
+            <div id="success_msg" class="alert alert-danger" role="alert">
+                Pls add something to the cart
+            </div>
+        {% else %}
+    	   <h2 class="total">Total Price:{{total[0]}}</h6>
+            <form method ="POST" action="/final">
+    	       <label for="total_price">Enter Amount to be paid: </label>
+               <input type="text" id="total_price" name="total_price">
+               <br>
+               <br>
+               <input type="submit" value="Pay" name="submit_btn">
+            </form>
+        {% endif %}
+    </div>
+ {% endblock %}

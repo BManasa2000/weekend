@@ -1,0 +1,352 @@
+{% extends "layout1.html" %}
+
+{% block title %}Books{% endblock %}
+
+{% block content %}
+<!-- Bootstrap CSS -->
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-eOJMYsd53ii+scO/bJGFsiCZc+5NDVN2yr8+0RDqr0Ql0h+rP48ckxlpbzKgwra6" crossorigin="anonymous">
+
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-validate/1.19.1/jquery.validate.min.js"></script>
+
+ <!-- Option 1: Bootstrap Bundle with Popper -->
+ <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta3/dist/js/bootstrap.bundle.min.js" integrity="sha384-JEW9xMcG8R+pH31jmWH6WWP0WintQrMb4s7ZOdauHnUtxwoG2vI5DkLtS3qm9Ekf" crossorigin="anonymous"></script>
+
+
+ <style>
+	body {
+		content: "";
+	  	background-image: url('/static/final1.png');
+		background-size: cover;
+		position: absolute;
+		top: 0px;
+		right: 0px;
+		bottom: 0px;
+		left: 20px;
+		opacity: 1;
+	}
+
+	div {
+		opacity: 1;
+		font-weight: bold;
+		color:black;
+	}
+
+	button {
+		opacity: 1;
+		font-weight: bold;
+		color:black;
+	}
+	</style>
+
+	<h1>Book</h1>
+
+	<br>
+		
+	<form class="validateForm" method="POST">
+		<div> 
+			<h2>Add Genre</h2>
+			<div>
+				<label for="genre">Genre</label>
+				<input id="genre" type="text" name="genre" placeholder="Genre" minlength="2" pattern="^[a-zA-Z][a-zA-Z0-9\s]*" required>
+				<!-- [a-zA-Z][a-zA-Z0-9\s]* -->
+			</div>
+			<br>
+			<div>
+				<input id="btnSubmit" type="submit" name="submit_btn" onclick="return confirm('Are you sure?')" value="Add Genre"> 			
+			</div>
+		</div>
+	</form>
+
+	<br>
+
+	<form class="validateForm" method="POST">
+		<div> 
+			<h2>Delete Genre</h2>
+			<div>
+				<label for="genre">Genre</label>
+				<select name = "genreIDDel">
+					<!-- <option disabled selected value="">Tier</option> -->
+					{% for genre in genres %}
+					<option value={{genre[0]}} name = "genreIDDelete">
+						{{genre[1]}}
+					</option>
+					{% endfor %}
+				</select>
+			</div>
+			<br>
+			<div>
+				<input id="btnSubmit" type="submit" name="submit_btn" onclick="return confirm('\t\t\t\tCaution!\n\n\t\tYou are about to delete a Genre\n All Books belonging to this genre will be DELETED!!')" value="Delete Genre"> 			
+			</div>
+		</div>
+	</form>
+
+	<br>
+	<br>
+
+	<form class="validateForm" method="POST" enctype=multipart/form-data  >
+		<div class="form-group row">
+			<h2>Add book</h2>
+				{%- if flag: %}
+					<div class="alert alert-danger" role="alert">
+						Please select a .txt or .pdf file.
+					</div>
+				{% endif -%}
+				{%- if dupbook == false %}
+					<div class="alert alert-danger" role="alert">
+						Book already exists
+					</div>
+				{% endif -%}
+			<div class="col-sm-3">
+				<label for="tierid">Tier</label>
+				<select name = "tierid">
+<!-- 						<option disabled selected value="">Tier</option>
+-->					{% for tier in tiers %}
+					<option value={{tier[0]}} name = "tierid">
+						{{tier[1]}}
+					</option>
+					{% endfor %}
+				</select>
+			</div>
+			<div class="col-sm-4">
+				<label for="isbnEntered">ISBN</label>
+				<input id="isbnEntered" type="number" name="isbn" placeholder="ISBN" min="1000000000" max="9999999999999" pattern="\S+.*">
+			
+			</div>
+			<div class="col-sm-4">
+				<label for="bookName">Title</label>
+				<input id="book_name" type="text" name="bookName" placeholder="Title" minlength="1" pattern="^[a-zA-Z][a-zA-Z0-9\s]*" required>
+			</div>	
+		</div>
+
+		<br>
+
+		<div class="form-group row">
+			<div class="col-sm-5">
+				<label for="author">Author</label>
+				<input id="author" type="text" name="author" placeholder="Author" minlength="1" pattern="^[a-zA-Z][a-zA-Z0-9\s]*" required>
+			</div>
+			<div class="col-sm-3">
+				<label for="genre">Genre</label>
+				<select name = "genre">
+<!-- 					<option disabled selected value="">Genre</option>
+	-->				{% for genre in genres %}
+					<option value={{genre[0]}} name = "genre">
+						{{genre[1]}}
+					</option>
+					{% endfor %}
+				</select>
+			</div>
+		</div>
+
+		<br>
+
+		<div class="form-group row">
+			<input type=file class="form-control-file" name=file>
+		</div>
+
+		<br>
+
+		<div>
+			<input id="btnSubmit" type="submit" name="submit_btn"  onclick="return confirm('Are you sure?')" value="Add Book">
+			<!-- onclick="alreadyExistsCheck();" -->
+		</div>
+	</form>
+	
+	
+	<br>
+		
+	<form method="POST">
+		<div class="form-group row"> 
+			<h2>Delete book</h2>
+			<lable>(Provide any one or both.)</lable>
+			{%- if mismatch == false %}
+		    	<div class="alert alert-danger" role="alert">
+	            	ISBN and Title do not correspond to the same book.
+    			</div>
+			{% endif -%}
+			<div class="col-sm-5">
+				<label for="isbn">ISBN</label>
+				<input id="isbn" type="number" name="isbn" placeholder="ISBN">
+			</div>
+			<div class="col-sm-5">
+				<label for="bookName">Title</label>
+				<input id="book_name" type="text" name="bookName" placeholder="Book name">
+			</div>
+
+			<br>
+
+			<div>
+				<input id="btnSubmit" type="submit" name="submit_btn" onclick="return confirm('Are you sure?')" value="Delete Book">
+			</div>
+		</div>
+		
+	</form>
+
+	<br>
+
+	<form method="POST">
+		<div class="form-group row"> 
+			<h2>Update book tier</h2>
+			<lable>Provide any one or both.</lable>
+			{%- if mismatch2 == false %}
+		    	<div class="alert alert-danger" role="alert">
+	            	ISBN and Title do not correspond to the same book.
+    			</div>
+			{% endif -%}
+			<div class="col-sm-3">
+				<label for="tierid">Tier</label>
+				<select name = "tierid">
+					<option disabled selected value="">Tier</option>
+					{% for tier in tiers %}
+					<option value={{tier[0]}} name = "tierid">
+						{{tier[1]}}
+					</option>
+					{% endfor %}
+				</select>
+			</div>
+			<div class="col-sm-4">
+				<label for="isbn">ISBN</label>
+				<input id="isbn" type="number" name="isbn" placeholder="ISBN">
+			</div>
+			<div class="col-sm-4">
+				<label for="bookName">Title</label>
+				<input id="book_name" type="text" name="bookName" placeholder="Book name">
+			</div>
+		</div>	
+		<br>
+		<div>
+			<input id="btnSubmit" type="submit" name="submit_btn" onclick="return confirm('Are you sure?')" value="Update Book Tier">
+		</div>
+		
+	</form>
+	<br>
+	
+	<form class="validateForm" method="POST">
+		<div> 
+			<h2>Search</h2>
+			<div>
+				<label for="searchBook">Title</label>
+				<input id="searchBook" type="text" name="searchBook" placeholder="Title" required>
+				<!-- [a-zA-Z][a-zA-Z0-9\s]* -->
+			</div>
+			<br>
+			<div>
+				<input id="btnSubmit" type="submit" name="submit_btn"  value="Search Book"> 			
+			</div>
+		</div>
+	</form>
+	<br>
+	{% if searched == true %}
+		<h2>Book searched</h2>
+		<table class="table">
+		    <thead>
+		    	<tr>
+				<th>BookID</th>
+	        	<th>ISBN</th>
+	        	<th>Title</th>
+	       		<th>Author</th>
+	       		<th>Genre</th>
+	       		<th>Tier</th>
+				<th>File</th>
+		    	</tr>
+		    </thead>    
+		    <tbody>
+		    {% for b in searchResults %}    
+            <tr>
+                <td>{{b[0]}}</td>
+                <td>{{b[1]}}</td>
+                <td>{{b[2]}}</td>
+                <td>{{b[3]}}</td>
+				{% for genre in genres %}
+					{% if b[4] == genre[0] %}
+						<td>{{genre[1]}}</td>
+					{% endif %}
+				{% endfor %}
+            	{% for tier in tiers %}
+            		{% if tier[0] == b[5] %}
+            			<td>{{tier[1]}}</td>
+            		{% endif %}
+            	{% endfor %}
+				<td>{{b[6]}}</td>
+                
+
+
+            </tr>
+	    {% endfor %}
+		    </tbody>
+		</table>
+
+	{% endif %}
+	<br>
+
+	<h2>Book Data</h2>
+	<table class="table">
+	    <thead>
+	    	<tr>
+				<th>BookID</th>
+	        	<th>ISBN</th>
+	        	<th>Title</th>
+	       		<th>Author</th>
+	       		<th>Genre</th>
+	       		<th>Tier</th>
+				<th>File</th>
+	    	</tr>
+	    </thead>    
+	    <tbody>
+	    {% for book in books %}    
+            <tr>
+                <td>{{book[0]}}</td>
+                <td>{{book[1]}}</td>
+                <td>{{book[2]}}</td>
+                <td>{{book[3]}}</td>
+				<!-- <td>{{book[4]}}</td> -->
+				{% for genre in genres %}
+					{% if book[4] == genre[0] %}
+						<td>{{genre[1]}}</td>
+					{% endif %}
+				{% endfor %}
+            	{% for tier in tiers %}
+            		{% if tier[0] == book[5] %}
+            			<td>{{tier[1]}}</td>
+            		{% endif %}
+            	{% endfor %}
+				<td>{{book[6]}}</td>
+                
+
+
+            </tr>
+	    {% endfor %}
+	    </tbody>
+	</table>
+
+	<script src="//code.jquery.com/jquery-1.12.0.min.js"></script>
+
+	<script>
+		$(function() {
+		    $('form.validateForm').each(function(key, form) {
+		        $(form).validate(); 
+		    });
+		});
+	</script>
+
+	<!-- <script type = "text/javascript">
+		function alreadyExistsCheck(){
+			// print("in exists");
+			alert("in exists");
+
+			var isbnval = document.getElementById("isbnEntered").value;
+			
+			{% for book in books %}
+			alert("in for  a " + isbnval + book[0]);
+			var isbndata = int(book[0])
+				{% if isbndata == isbnval %}
+					alert("Book already exists in database");
+				{% endif %}
+			{% endfor %}
+
+		}
+	</script> -->
+	
+{% endblock %}

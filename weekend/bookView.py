@@ -1,4 +1,4 @@
-from flask import Flask, render_template, request, flash, redirect, url_for, session
+from flask import Flask, render_template, request, redirect, url_for, session
 from werkzeug.utils import secure_filename # for uploading files to server
 from flask_mysql_connector import MySQL
 import json
@@ -167,47 +167,3 @@ def pdf_display(bookID):
 
     # User is not loggedin redirect to login page
     return redirect(url_for('login'))
-
-def allowed_file(filename):
-    return '.' in filename and \
-           filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
-
-# uploading a new book
-@app.route('/upload', methods=['GET', 'POST'])
-def upload_file():
-    if request.method == 'POST':
-        conn = mysql.connection
-        cur = conn.cursor()
-        # check if the post request has the file part
-        form = request.form
-        # isbn = int(form.get("isbn"))
-        isbn = form.get("isbn")
-        title = form.get("title")
-        author = form.get("author")
-        tierName = form.get("tierName")
-        cur.execute("SELECT tierID from tier where tierName = %s", (tierName,))
-        tierID = cur.fetchone()[0]
-        # print(tierID)
-        # print(tierName)
-        genre = form.get("genre")
-        cur.execute('SELECT genreID from GenreTable where genre = %s',(genre, ))
-        genreID = cur.fetchone()[0]
-        name = request.files['file'].filename 
-        if (not name):
-            # print('No file')
-            flag = 1
-            return render_template("book_upload.html", flag = flag)
-            # return redirect(request.url)
-        if (not isbn):
-            isbn = 0
-        file = request.files['file']
-        file.save(os.path.join(app.config['UPLOAD_FOLDER'], secure_filename(file.filename)))
-        try:
-            sql = "INSERT into Book (isbn, bookName, author, genreID, tierID, fileName) VALUES (%s, %s, %s, %s, %s, %s);"
-            val = (isbn, title, author, genreID, tierID, name)
-            cur.execute(sql, val)
-        except:
-            return "OOPS couldn't add"
-        mysql.connection.commit()
-        return 'file uploaded successfully'
-    return render_template("book_upload.html", flag = 0)

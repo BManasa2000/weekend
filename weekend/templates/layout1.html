@@ -2,6 +2,8 @@
 <html>
 	<head>
 		<meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+
 		<title>{% block title %}{% endblock %}</title>
 		<link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
 		<link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.7.1/css/all.css">
@@ -49,20 +51,20 @@
 
 		<!-- <h2>Home Page</h2> -->
 		<div class="sidenav">
-		  <a href="/shop">Let's Shop</a>
-		  <!-- <a href="/cart">Check Cart</a> -->
-		  <a href="/books">Visit Library</a>	
-		  <a href="/upgrade">Let's Upgrade</a>
+		  <a href="/admin/tier">Tier</a>
+		  <a href="/admin/book">Books</a>
+		  <a href="/admin/item">Items</a>	
+		  <a href="/admin/admin">Admin</a>
 		</div>
 
 		<nav class="navtop">
 			<div>
 				<h1>{% block header %}{% endblock %}</h1>
-                <a href="{{ url_for('home') }}"><i class="fas fa-home"></i>Home</a>
-				<a href="{{ url_for('profile') }}"><i class="fas fa-user-circle"></i>Profile</a>
+                <a href="{{ url_for('adminHome') }}"><i class="fas fa-home"></i>Home</a>
 				<a href="{{ url_for('logout') }}"><i class="fas fa-sign-out-alt"></i>Logout</a>
 			</div>
 		</nav>
+   
 		<div class="content">
 			{% block content %}{% endblock %}
 		</div>

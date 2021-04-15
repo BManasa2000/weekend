@@ -80,10 +80,10 @@ def upgrade():
     # User is not loggedin redirect to login page
     return redirect(url_for('login'))
 
-# shop
-@app.route('/shop')
-def shop():
-    return "Let's shop!"
+# # shop
+# @app.route('/shop')
+# def shop():
+#     return "Let's shop!"
 
 @app.route('/cart')
 def cart():
@@ -285,7 +285,7 @@ def admin_login():
             session['id'] = user[0]
             msg = 'Logged in successfully !'
             # return render_template('home.html', msg = msg)
-            return redirect(url_for("home"))
+            return redirect(url_for('adminHome'))
         else:
             # Account doesnt exist or username/password incorrect
             msg = 'Incorrect username / password !'
