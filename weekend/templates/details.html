@@ -10,7 +10,6 @@
     <link rel="stylesheet" type="text/css" href="https://stackpath.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css">
     <link href="//maxcdn.bootstrapcdn.com/bootstrap/4.1.1/css/bootstrap.min.css" rel="stylesheet" id="bootstrap-css">
 
-    
 
     <div class="container">
       <div class="navbar">
@@ -44,6 +43,7 @@
         <p>₹ {{price}}</p>
         <p>Brand: {{Brand}}
         <p>{{Desc}}</p>
+        <p>Stock: {{Stock}}</p>
         <!-- <a href="/shop"><button type="button" name="goback">Continue Shopping</button></a> -->
         <input type="submit" name="submit_btn" value="Add To Cart">
     </form>
@@ -58,6 +58,20 @@
         if (qty == 0)
         {
             alert("Oops! Quantity cannot be 0")
+            return false;
+        } 
+        // alert(qty < 0)
+        if (qty < 0)
+        {
+            alert("Oops! Quantity cannot be negative")
+            return false;
+        }       
+        var stock = "{{Stock}}";
+        // alert(stock)
+        stock = parseInt(stock);
+        if (qty > stock)
+        {
+            alert("Oops! Not enough stock")
             return false;
         }
         return true;

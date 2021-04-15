@@ -10,6 +10,10 @@
     <link rel="stylesheet" type="text/css" href="https://stackpath.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css">
     <link href="//maxcdn.bootstrapcdn.com/bootstrap/4.1.1/css/bootstrap.min.css" rel="stylesheet" id="bootstrap-css">
 
+    <div id="er_msg" class="alert alert-warning" role="alert" style="display:none">
+      Please enter the right amount!
+    </div>
+
     <div class="container">
       <div class="navbar">
         <h1>PAYMENT</h1>
@@ -24,7 +28,7 @@
       </div>
     </div>
 
-    <div class="cart-total">
+    <div class="cart-total" id="cart">
     	<!-- <h1>Payment</h1> -->
         {% if total[0] == None %}
             <div id="success_msg" class="alert alert-danger" role="alert">
@@ -32,7 +36,7 @@
             </div>
         {% else %}
     	   <h2 class="total">Total Price:{{total[0]}}</h6>
-            <form method ="POST" action="/final">
+            <form method ="POST" action="/final" onsubmit="return(validate())">
     	       <label for="total_price">Enter Amount to be paid: </label>
                <input type="text" id="total_price" name="total_price">
                <br>
@@ -41,4 +45,22 @@
             </form>
         {% endif %}
     </div>
+
+    <script type="text/javascript">
+        function validate(){
+            var pay = document.getElementById("total_price").value;
+            pay = parseInt(pay);
+            var actual = "{{total[0]}}";
+            actual = parseInt(actual);
+            if (pay != actual)
+            {
+                document.getElementById("er_msg").style.display = "block";
+                return false;
+            }
+            alert("PAYMENT SUCCESSFUL!");
+            return true;
+        }
+    </script>
+
+
  {% endblock %}

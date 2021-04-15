@@ -41,7 +41,7 @@ def home():
                 cur.execute('''SELECT b.bookID, b.bookName, b.author, g.genre, b.tierID, b.filename FROM book b, GenreTable g where g.genreID = b.genreID and b.genreID = %s''', (genreID, ))
                 books = cur.fetchall()
         # return render_template('home.html', msg = msg)
-            return render_template("home.html", emailid=emailid, books = books, userTier = userTier)  
+            return render_template("home.html", emailid=emailid, books=books, userTier=userTier)  
         except Exception as error:
             print(error)
             return "sorry"
@@ -116,10 +116,12 @@ def login():
             sql2 = "SELECT max(num) from " + sql1 + " y"
             print(sql2)
             cur.execute(sql2)
-            res = cur.fetchone()[0]
-            print(res)
-            cur.execute("SELECT genreID from " + sql1 + " y where num = %s", (res,))
-            res = cur.fetchone()[0]
+            res = cur.fetchone()
+            if res is not None:
+                res = res[0]
+                print(res)
+                cur.execute("SELECT genreID from " + sql1 + " y where num = %s", (res,))
+                res = cur.fetchone()
             print(res)
             genreID = res
             try:
@@ -127,6 +129,7 @@ def login():
                     cur.execute("SELECT b.bookID, b.bookName, b.author, g.genre, b.tierID, b.filename FROM book b, GenreTable g where b.genreID = g.genreID and b.tierID <= %s", (userTier,))
                     books = cur.fetchall()
                 else:
+                    genreID = genreID[0]
                     cur.execute('''SELECT b.bookID, b.bookName, b.author, g.genre, b.tierID, b.filename FROM book b, GenreTable g where g.genreID = b.genreID and b.genreID = %s''', (genreID, ))
                     books = cur.fetchall()
             # return render_template('home.html', msg = msg)
@@ -162,15 +165,32 @@ def register():
         email = request.form['email']
         city = request.form['city']
         phoneno1 = request.form['phoneno1']
+        phoneno2 = request.form['phoneno2']
         cursor = mysql.connection.cursor()
         cursor.execute('SELECT * FROM user WHERE emailID = %s', (email,))
         account = cursor.fetchone()
         if account:
-            msg = 'Account already exists !'
+            msg = 'An account with this email ID already exists !'
         elif not re.match(r'[^@]+@[^@]+\.[^@]+', email):
             msg = 'Invalid email address !'
-        elif not re.match(r'[A-Za-z0-9]+', username):
+        elif not re.match(r'^[a-zA-Z0-9]{5,30}$', username):
             msg = 'Username must contain only characters and numbers !'
+        elif not re.match(r'[A-Za-z0-9-_=<>/\\\^\$\.\|\?\*\+\(\)\[\{\}\]!@#%&]{8,20}', password):
+            msg = 'Password must contain between 8 and 20 characters!'
+        elif not re.match(r'\S*[A-Z]+', password):
+            msg = 'Password must contain at least one capital letter!'
+        elif not re.match(r'\S*[a-z]+', password):
+            msg = 'Password must contain at least one lower letter!'
+        elif not re.match(r'\S*[0-9]+', password):
+            msg = 'Password must contain at least one number!'
+        elif not re.match(r'\S*[-_=<>/\\\^\$\.\|\?\\+\(\)\[\{\}\]!@#%&]+', password):
+            msg = 'Password must contain at least one special character!'
+        elif not re.match(r'[0-9]{2}/[0-9]{2}/[0-9]{4}', dob):
+            msg = 'Please enter a valid date !'
+        elif not re.match(r'[0-9]{10}', phoneno1):
+            msg = 'Please enter a valid Phone Number !'
+        elif phoneno2 != "" and not re.match(r'[0-9]{10}', phoneno2):
+            msg = 'Please enter a valid Phone Number !'
         elif not username or not password or not email:
             msg = 'Please fill out the form !'
         else:
@@ -181,16 +201,15 @@ def register():
             uid = user[0]
             cursor.execute("INSERT INTO Contact (phoneNo, userID) VALUES (%s,%s)", (phoneno1,uid,))
             mysql.connection.commit()
-            if 'phoneno2' in request.form:
-                phoneno2 = request.form['phoneno2']
-                if phoneno2 != "":
-                    cursor.execute("INSERT INTO Contact (phoneNo, userID) VALUES (%s,%s)", (phoneno2,uid,))
-                    mysql.connection.commit()
+            if phoneno2 != "" and phoneno1 != phoneno2:
+                cursor.execute("INSERT INTO Contact (phoneNo, userID) VALUES (%s,%s)", (phoneno2,uid,))
+                mysql.connection.commit()
             session['loggedin'] = True
             session['id'] = user[0]
             session['emailid'] = user[1]
             msg = 'You have successfully registered !'
-            return render_template('home.html', msg = msg)
+            return redirect(url_for('home'))
+            # return render_template('home.html', msg = msg)
 
     elif request.method == 'POST':
         msg = 'Please fill out the form !'

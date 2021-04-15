@@ -17,6 +17,10 @@
     <div class="container">
       <div class="navbar">
         <h1>SHOP</h1>
+          <div class="d-flex">
+            <input id = "search_by" class="form-control me-2" type="search" placeholder="Search" aria-label="Search">
+            <button id = "search" class="btn btn-outline-success" onclick = "search()">Search</button>
+          </div>
         <nav>
           <ul>
               <!-- <li><a href="/">Home</a></li> -->
@@ -77,9 +81,28 @@
   // on loading page
   $(document).ready(function(){
     var items;
-    items = JSON.parse('{{ products | tojson | safe}}');
+    // items = JSON.parse('{{ products | tojson | safe}}');
     // build_table("item_list", items);
   });
+
+  function search() {
+       var search_by = document.getElementById("search_by").value;
+       document.getElementById("search_by").value = "";
+       var json_search_by = JSON.stringify(search_by);
+       $.ajax({
+        url: '/searchItems',
+        type: 'POST',
+        contentType: 'application/json',
+        dataType : 'json',
+        data : json_search_by,
+        success: function(data){
+          build_table("item_list", data);          
+        },
+        error: function(error){
+          console.log(error);
+        }
+      }); 
+    }
 
   function build_table(listname, items){
       var html = '';

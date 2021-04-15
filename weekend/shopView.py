@@ -1,4 +1,4 @@
-from flask import Flask,render_template,request, redirect, url_for, session
+from flask import Flask, render_template, request, redirect, url_for, session
 from datetime import datetime
 from flask_mysql_connector import MySQL
 import MySQLdb.cursors
@@ -99,13 +99,20 @@ def add(id):
                     cur.execute("SELECT neededQuantity from Cart where userID = %s and itemID = %s", (userID, id, ))
                     present_quantity = cur.fetchone()
                     qty=int(qty)
+                    cur.execute("SELECT itemPRICE from Item WHERE itemID = %s", (id,))
+                    cost=cur.fetchone()
                     if present_quantity is not None:
-                        present_quantity = present_quantity[0]
-                        qty = present_quantity + qty
+                        present_quantity = int(present_quantity[0])
+                        print(present_quantity)
+                        print(type(present_quantity))
+                        price = int(int(cost[0])*qty)
+                        print(qty)
+                        print(price)
                         cur.execute("UPDATE Cart set neededQuantity = %s where userID = %s and itemID = %s", (qty, userID, id,))
+                        cur.execute("UPDATE Cart set price = %s where userID = %s and itemID = %s", (price, userID, id,))
                     else:
-                        cur.execute("SELECT itemPRICE from Item WHERE itemID = %s", (id,))
-                        cost=cur.fetchone()
+                        print(present_quantity)
+                        print("In none")
                         cur.execute("SELECT itemIMAGE from Item WHERE itemID = %s", (id,))
                         cart_image=cur.fetchone()
                         print(cart_image)
@@ -169,7 +176,7 @@ def payment():
         try:
             conn = mysql.connection
             cur = conn.cursor()
-            cur.execute("SELECT sum(price) from Cart")
+            cur.execute("SELECT sum(price) from Cart where userID = %s", (userID, ))
             total=cur.fetchone()
             print(total)
             # amount=cur.execute("SELECT sum(neededQuantity) from cart")
@@ -207,7 +214,7 @@ def delete1(id):
         except ValueError:
             print("Problem deleting item")
         mysql.connection.commit()
-        return 'success'
+        return redirect(url_for('shop'))
     return redirect(url_for('login'))
 
 @app.route("/final", methods=['POST','GET'])
@@ -227,11 +234,11 @@ def final():
                 print(type(cost))
                 conn = mysql.connection
                 cur = conn.cursor()
-                cur.execute("SELECT sum(price) from Cart")
+                cur.execute("SELECT sum(price) from Cart where userID = %s", (userID,))
                 total=cur.fetchone()
                 print(type(total[0]))
                 if int(cost)==int(total[0]):
-                    cur.execute("SELECT itemID from Cart")
+                    cur.execute("SELECT itemID from Cart where userID = %s", (userID, ))
                     boughtitms=cur.fetchall()
                     print(boughtitms)
                     date=datetime.date(datetime.now())
@@ -252,10 +259,14 @@ def final():
                         #price=int(price[0])
                         cur.execute("INSERT INTO Bought (userID, itemID, boughtQuantity, amount, boughtDate,boughtTime) VALUES (%s, %s, %s, %s, %s, %s)",(userID, boughtitm,qty,price,date,time,))
                         cur.execute("DELETE FROM Cart where userID = %s and itemID = %s", (userID,boughtitm ,))
+                        cur.execute("SELECT stock from Item where itemID = %s", (boughtitm, ))
+                        stock = cur.fetchone()[0]
+                        stock = int(stock) - int(qty)
+                        cur.execute("UPDATE item set stock = %s where itemID = %s", (stock ,boughtitm ,))
                         # cur.execute("INSERT INTO Bought (itemID, boughtQuantity, amount, boughtDate,boughtTime) VALUES (%s, %s, %s, %s, %s)",(boughtitm,qty,price,date,time,))
                         #cur.execute("INSERT into Bought values(boughtitm,qty[0],price[0],date,time)")
                         mysql.connection.commit()
-                        return 'success'     
+                        return redirect(url_for('shop'))     
                 return 'Please Enter the correct amount to be paid'
     return redirect(url_for('login'))
 
@@ -286,7 +297,7 @@ def boughtcart():
     return redirect(url_for('login'))
     
 # filtering the book shelves
-@app.route('/filterItems', methods = ["POST"])
+@app.route('/filterItems', methods = ["GET", "POST"])
 def filter_items():
     if 'loggedin' in session:
         # User is loggedin show them the home page
@@ -312,6 +323,34 @@ def filter_items():
             # print(genre)
         fil_items = json.dumps(fil_items)
         return fil_items
+
+    # User is not loggedin redirect to login page
+    return redirect(url_for('login'))
+
+@app.route('/searchItems', methods=["GET", "POST"])
+def search_items():
+    if 'loggedin' in session:
+        # User is loggedin show them the home page
+        cursor = mysql.connection.cursor(MySQLdb.cursors.DictCursor)
+        cursor.execute('SELECT * from user WHERE userID = %s', (session['id'],))
+        account = cursor.fetchone()
+        userID = account[0]
+        emailid = account[1]
+        username = account[2]
+        userTier = account[9]
+        conn = mysql.connection
+        cur = conn.cursor()
+        search_items = []
+        search_by = request.json
+        search_by = "%" + search_by + "%";
+        print(search_by)
+        cur.execute("SELECT * from Item i, CategoryTable c where c.categoryID = i.categoryID and (i.itemName like %s or c.category like %s or i.brand like %s)", (search_by, search_by, search_by, ))
+        products=cur.fetchall()
+        print(products)
+        for product in products:
+            search_items.append(product)
+        search_items = json.dumps(search_items)
+        return search_items
 
     # User is not loggedin redirect to login page
     return redirect(url_for('login'))
