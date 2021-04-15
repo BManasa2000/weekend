@@ -93,10 +93,18 @@ def adminbook():
         if request.method == "POST":
             if request.form['submit_btn'] == 'Add Genre':
                 genre = request.form.get("genre")
+                dupGenre = True
                 print('===============================================')
                 #print('oneee', one)
                 print(genre)
+
                 print('=============================================')
+                for genrev in genres:
+                    genreVal = genrev[1]
+                    if genre == genreVal:
+                        dupGenre = False
+                        return render_template("adminbook1.html", dupbook = True, tiers = tiers, books = books, genres = genres, flag = 0, dupGenre = dupGenre)
+
                 cur.execute("INSERT INTO GenreTable (genre) VALUES (%s)",(genre,))
                 mysql.connection.commit()
                 #return render_template('adminbook.html', tiers = tiers, books = books, genres = genres, flag = 0)
@@ -276,7 +284,7 @@ def adminitem():
                         dupCategory = False
                         return render_template('adminItem.html', categories = categories, items = items, flag = 0, dupCategory = dupCategory)
                         # return 'duplicate' #CAN MAKE HTML FILE
-                if(dupTier):
+                if(dupCategory):
                     cur.execute("INSERT INTO CategoryTable (category) VALUES (%s)",(category,))
                     mysql.connection.commit()
                 #return render_template('adminbook.html', tiers = tiers, books = books, genres = genres, flag = 0)
@@ -337,10 +345,11 @@ def adminitem():
                 itemname = request.form.get("itemupdate")
                 itembrand = request.form.get("itemupdatebrand")
                 itemstock = request.form.get("itemupdatestock")
+                itemdesc = request.form.get("updatedescription")
                 print('===============================================')
                 print("vaah")
                 print('===============================================')
-                cur.execute("UPDATE Item SET stock = %(itemstock)s WHERE itemName = %(itemname)s AND brand = %(itembrand)s", {'itemstock': itemstock, 'itemname': itemname, 'itembrand': itembrand})
+                cur.execute("UPDATE Item SET stock = %(itemstock)s WHERE itemName = %(itemname)s AND brand = %(itembrand)s AND description = %(itemdesc)s", {'itemstock': itemstock, 'itemname': itemname, 'itemdesc': itemdesc, 'itembrand': itembrand})
                 # cur.execute("UPDATE Tier SET tierPrice = %(tierprice)s WHERE tierID = %(tierid)s", { 'tierprice': tierprice, 'tierid': tierid})
                 mysql.connection.commit()
                 # return 'success'
