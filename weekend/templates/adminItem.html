@@ -44,15 +44,24 @@
 
     <h1>Item</h1>
 
-    
+    {%- if flag: %}
+		<div class="alert alert-danger" role="alert">
+			Please select a .png or .jpg or .jpeg file.
+		</div>
+	{% endif -%}
+	{%- if dupitem == false %}
+		<div class="alert alert-danger" role="alert">
+			Item already exists
+		</div>
+	{% endif -%}
+	{%- if dupCategory == false %}
+		<div class="alert alert-danger" role="alert">
+			Category already exists.
+		</div>
+	{% endif -%}
 	<form class="validateForm" method="POST">
 		<div> 
 			<h2>Add Category</h2>
-			{%- if dupCategory == false %}
-				<div class="alert alert-danger" role="alert">
-					Category already exists.
-				</div>
-			{% endif -%}
 			<div>
 				<label for="category">Category</label>
 				<input id="category" type="text" name="category" placeholder="Category" minlength="2" pattern="^[a-zA-Z]*" required>
@@ -94,16 +103,6 @@
 	<form class="validateForm" method="POST" enctype=multipart/form-data  >
 		<div class="form-group row">
 			<h2>Add item</h2>
-				{%- if flag: %}
-					<div class="alert alert-danger" role="alert">
-						Please select a .png or .jpg or .jpeg file.
-					</div>
-				{% endif -%}
-				{%- if dupitem == false %}
-					<div class="alert alert-danger" role="alert">
-						Item already exists
-					</div>
-				{% endif -%}
 			<!-- <div class="col-sm-3">
 				<label for="tierid">Tier</label>
 				<select name = "tierid">
@@ -185,8 +184,8 @@
 				<input id="itemDelBrand" type="text" name="itemDelBrand" placeholder="Brand" required>
 			</div>
 			<div class="form-group row">
-				<label for="deldescription">Description</label>
-				<textarea rows = "2" cols = "2" name = "deldescription" id="deldescription" type="text" required></textarea>
+				<label for="updatedescription">Description</label>
+				<textarea rows = "2" cols = "2" name = "deldescription" id="updatedescription" type="text" required></textarea>
 			</div>
 			<br>
 			<br>
@@ -209,6 +208,10 @@
 			<div class="col-sm-5">
 				<label for="itemupdatebrand">Brand</label>
 				<input id="itemupdatebrand" type="text" name="itemupdatebrand" placeholder="Brand" required>
+			</div>
+			<div class="form-group row">
+				<label for="deldescription">Description</label>
+				<textarea rows = "2" cols = "2" name = "deldescription" id="deldescription" type="text" required></textarea>
 			</div>
             <div class="col-sm-5">
 				<label for="itemupdatestock">Stock</label>

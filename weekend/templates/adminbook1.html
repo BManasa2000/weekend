@@ -43,7 +43,31 @@
 	<h1>Book</h1>
 
 	<br>
-		
+	{%- if flag: %}
+		<div class="alert alert-danger" role="alert">
+			Please select a .txt or .pdf file.
+		</div>
+	{% endif -%}
+	{%- if dupbook == false %}
+		<div class="alert alert-danger" role="alert">
+			Book already exists
+		</div>
+	{% endif -%}
+	{%- if dupGenre == false %}
+		<div class="alert alert-danger" role="alert">
+			Genre already exists
+		</div>
+	{% endif -%}
+	{%- if mismatch == false %}
+		<div class="alert alert-danger" role="alert">
+	    	ISBN and Title do not correspond to the same book.
+		</div>
+	{% endif -%}
+	{%- if mismatch2 == false %}
+    	<div class="alert alert-danger" role="alert">
+        	ISBN and Title do not correspond to the same book.
+		</div>
+	{% endif -%}
 	<form class="validateForm" method="POST">
 		<div> 
 			<h2>Add Genre</h2>
@@ -87,7 +111,7 @@
 
 	<form class="validateForm" method="POST" enctype=multipart/form-data  >
 		<div class="form-group row">
-			<h2>Add book</h2>
+			<h2>Add book</h2><!-- 
 				{%- if flag: %}
 					<div class="alert alert-danger" role="alert">
 						Please select a .txt or .pdf file.
@@ -97,7 +121,7 @@
 					<div class="alert alert-danger" role="alert">
 						Book already exists
 					</div>
-				{% endif -%}
+				{% endif -%} -->
 			<div class="col-sm-3">
 				<label for="tierid">Tier</label>
 				<select name = "tierid">
@@ -161,11 +185,11 @@
 		<div class="form-group row"> 
 			<h2>Delete book</h2>
 			<lable>(Provide any one or both.)</lable>
-			{%- if mismatch == false %}
+			<!-- {%- if mismatch == false %}
 		    	<div class="alert alert-danger" role="alert">
 	            	ISBN and Title do not correspond to the same book.
     			</div>
-			{% endif -%}
+			{% endif -%} -->
 			<div class="col-sm-5">
 				<label for="isbn">ISBN</label>
 				<input id="isbn" type="number" name="isbn" placeholder="ISBN">
@@ -190,11 +214,11 @@
 		<div class="form-group row"> 
 			<h2>Update book tier</h2>
 			<lable>Provide any one or both.</lable>
-			{%- if mismatch2 == false %}
+			<!-- {%- if mismatch2 == false %}
 		    	<div class="alert alert-danger" role="alert">
 	            	ISBN and Title do not correspond to the same book.
     			</div>
-			{% endif -%}
+			{% endif -%} -->
 			<div class="col-sm-3">
 				<label for="tierid">Tier</label>
 				<select name = "tierid">
