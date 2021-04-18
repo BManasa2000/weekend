@@ -1,10 +1,14 @@
-from flask import Flask, render_template, request, redirect, url_for, session
+from flask import Flask, render_template, request, redirect, url_for, session, send_file
 from datetime import datetime
 from flask_mysql_connector import MySQL
 import MySQLdb.cursors
 import re
 import json
+import pdfkit
+import os
 from weekend import app
+
+config = pdfkit.configuration(wkhtmltopdf='C:\\Program Files\\wkhtmltopdf\\bin\\wkhtmltopdf.exe')
 
 mysql = MySQL(app)
 
@@ -161,6 +165,7 @@ def shoppingcart():
             print("Error mysql connection 4")
             return
     return redirect(url_for('login'))
+
     
 @app.route("/payment", methods=['POST','GET'])
 def payment():
@@ -217,9 +222,12 @@ def delete1(id):
         return redirect(url_for('shop'))
     return redirect(url_for('login'))
 
+boughtitms2 = []
+
 @app.route("/final", methods=['POST','GET'])
 def final():
     if 'loggedin' in session:
+        global boughtitms2
         # User is loggedin show them the home page
         cursor = mysql.connection.cursor(MySQLdb.cursors.DictCursor)
         cursor.execute('SELECT * from user WHERE userID = %s', (session['id'],))
@@ -240,7 +248,9 @@ def final():
                 if int(cost)==int(total[0]):
                     cur.execute("SELECT itemID from Cart where userID = %s", (userID, ))
                     boughtitms=cur.fetchall()
-                    print(boughtitms)
+                    cur.execute("SELECT i.itemName, c.neededQuantity, c.price from Cart c, item i where userID = %s and c.itemID = i.itemID", (userID, ))
+                    boughtitms2=cur.fetchall()
+                    print(boughtitms2)
                     date=datetime.date(datetime.now())
                     time=datetime.time(datetime.now())
                     for boughtitm in boughtitms:
@@ -266,9 +276,25 @@ def final():
                         # cur.execute("INSERT INTO Bought (itemID, boughtQuantity, amount, boughtDate,boughtTime) VALUES (%s, %s, %s, %s, %s)",(boughtitm,qty,price,date,time,))
                         #cur.execute("INSERT into Bought values(boughtitm,qty[0],price[0],date,time)")
                         mysql.connection.commit()
-                        return redirect(url_for('shop'))     
-                return 'Please Enter the correct amount to be paid'
+                        # return redirect(url_for('shop'))  
+                    return render_template("bill.html", bought = boughtitms2)   
+                # return 'Please Enter the correct amount to be paid'
     return redirect(url_for('login'))
+
+@app.route("/bill", methods=['POST', 'GET'])
+def bill():
+    if request.method == 'POST':
+        global boughtitms2
+        html = render_template("bill2.html", bought = boughtitms2)
+        print(boughtitms2)
+        pdf = pdfkit.from_string(html, 'out.pdf', configuration = config, options = {"enable-local-file-access": ""})
+        #response = make_response(pdf)
+        #response.headers["Content-Type"] = "application/pdf"
+        #response.headers["Content-Disposition"] = "inline; filename=output.pdf"
+        path = "out.pdf"
+        return send_file(path,as_attachment=True)
+
+    # return render_template("bill.html", bought = boughtitms2)
 
 @app.route("/boughtcart", methods=['POST','GET'])
 def boughtcart():

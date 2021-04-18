@@ -1,0 +1,33 @@
+{% extends 'layout.html' %}
+
+{% block title %}Bill{% endblock %}
+
+{% block header %}Bill{% endblock %}
+
+{% block content %}
+
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-eOJMYsd53ii+scO/bJGFsiCZc+5NDVN2yr8+0RDqr0Ql0h+rP48ckxlpbzKgwra6" crossorigin="anonymous">
+
+<h2>Bill</h2>
+<div>
+    <p>Your bill:</p>
+    <table style="width:100%" class="table">
+        <tr>
+            <th scope="col">Item name</th>
+            <th scope="col">Quantity</th>
+            <th scope="col">Price</th>
+        </tr>
+        {% for item in bought %}
+        <tr>
+            <td>{{item[0]}}</td>
+            <td>{{ item[1]}}</td>
+            <td>Rs {{ item[2]}}</td>
+        </tr>
+        {% endfor %}
+    </table>
+    <form action="{{ url_for('bill') }}" method="post">
+        <input type="submit" value="Download">
+    </form>
+</div>
+
+{% endblock %}

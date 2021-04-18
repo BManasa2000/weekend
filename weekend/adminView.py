@@ -23,6 +23,7 @@ def admintier():
         cur = mysql.connection.cursor()
         rows = cur.execute("SELECT * FROM Tier ORDER BY tierPrice")
         tiers = cur.fetchall()
+        dupTier = True
         if request.method == "POST":
             if request.form['submit_btn'] == 'Add Tier':
                 tiername = request.form.get("tierName")
@@ -30,7 +31,6 @@ def admintier():
                 # cur = mysql.connection.cursor()
                 if not tiername or not tierprice:
                     return "Fields can not be empty" #CAN MAKE HTML FILE
-                dupTier = True
                 for tier in tiers:
                     tierVal = tier[1]
                     if tiername == tierVal:
@@ -346,10 +346,12 @@ def adminitem():
                 itembrand = request.form.get("itemupdatebrand")
                 itemstock = request.form.get("itemupdatestock")
                 itemdesc = request.form.get("updatedescription")
+                print()
                 print('===============================================')
                 print("vaah")
                 print('===============================================')
                 cur.execute("UPDATE Item SET stock = %(itemstock)s WHERE itemName = %(itemname)s AND brand = %(itembrand)s AND description = %(itemdesc)s", {'itemstock': itemstock, 'itemname': itemname, 'itemdesc': itemdesc, 'itembrand': itembrand})
+                print("UPDATE Item SET stock = %(itemstock)s WHERE itemName = %(itemname)s AND brand = %(itembrand)s AND description = %(itemdesc)s", {'itemstock': itemstock, 'itemname': itemname, 'itemdesc': itemdesc, 'itembrand': itembrand})
                 # cur.execute("UPDATE Tier SET tierPrice = %(tierprice)s WHERE tierID = %(tierid)s", { 'tierprice': tierprice, 'tierid': tierid})
                 mysql.connection.commit()
                 # return 'success'

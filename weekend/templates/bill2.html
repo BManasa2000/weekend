@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="utf-8">
+        <link rel="stylesheet" type="text/css" href="static/styles/bill.css">
+    </head>
+    <body>
+<h2>Bill</h2>
+<div>
+    <p>Your bill:</p>
+    <table style="width:100%">
+        <tr>
+            <th>Item name</th>
+            <th>Quantity</th>
+            <th>Price</th>
+        </tr>
+        {% for item in bought %}
+        <tr>
+            <td>{{item[0]}}</td>
+            <td>{{ item[1]}}</td>
+            <td>Rs {{ item[2]}}</td>
+        </tr>
+        {% endfor %}
+    </table>
+</div>
+    </body>
+
+</html>

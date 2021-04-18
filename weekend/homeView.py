@@ -27,11 +27,12 @@ def home():
         sql2 = "SELECT max(num) from " + sql1 + " y"
         print(sql2)
         cur.execute(sql2)
-        res = cur.fetchone()[0]
-        print(res)
-        cur.execute("SELECT genreID from " + sql1 + " y where num = %s", (res,))
-        res = cur.fetchone()[0]
-        print(res)
+        res = cur.fetchone()
+        if res is not None:
+            res = res[0]
+            print(res)
+            cur.execute("SELECT genreID from " + sql1 + " y where num = %s", (res,))
+            res = cur.fetchone()
         genreID = res
         try:
             if genreID is None:
@@ -41,7 +42,7 @@ def home():
                 cur.execute('''SELECT b.bookID, b.bookName, b.author, g.genre, b.tierID, b.filename FROM book b, GenreTable g where g.genreID = b.genreID and b.genreID = %s''', (genreID, ))
                 books = cur.fetchall()
         # return render_template('home.html', msg = msg)
-            return render_template("home.html", emailid=emailid, books=books, userTier=userTier)  
+            return render_template("home.html", username=username, emailid=emailid, books=books, userTier=userTier)  
         except Exception as error:
             print(error)
             return "sorry"
